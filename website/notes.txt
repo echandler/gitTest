@@ -1,0 +1,794 @@
+Things to test:
+* zoom in and zoom out all the way.
+* zoom in and then zoom out quickly before the map reloads.
+
+
+* do the above in all browsers
+* do the above in Firefox zoomed in.
+
+
+layer 0 = elevation features + roads and i-5.
+layer 1 = ?
+layer 2 = satellite view.
+layer 3 = everything is solid green except satellite view (mountains only).
+layer 4 = City names and boundaries.
+layer 5 = roads + i-5;
+layer 6  = roads are colored magenta (purple-red).
+layer 10 = water features are solid blue.
+layer 11 = parcel numbers.
+layer 12 = street names.
+layer 13 = addresses.
+layer 18 = large white grid with (example->)"T.30 N.R. 7 E." text in grid squares.
+layer 19 = additional main roads at low zoom.
+layer 17 = smaller squares than layer 18, text only when zoomed in.
+layer 31 = 2013 sales red.
+layer 33 = 2012 sales yellow.
+layer 35 = 2011 sales blue.
+layer 37 = bench mark areas.
+layer 38 = bench mark numbers.
+
+var a = document.createElement('a');
+var blob = new Blob(['hi'], {'type':'application\/octet-stream'});
+a.href = window.URL.createObjectURL(blob);
+a.download = 'filename.txt';
+console.log(a.href);
+a.click();
+
+document.body.addEventListener('dragenter', function(evt){ evt.stopPropagation();
+                                                           evt.preventDefault(); 
+                                                          });
+document.body.addEventListener('dragover', function(evt){ evt.stopPropagation();
+                                                          evt.preventDefault();
+                                                         });
+
+document.body.addEventListener('drop', function(evt){
+          evt.stopPropagation();
+          evt.preventDefault(); 
+          console.log("drop"); 
+          var aa = evt.dataTransfer.files[0];
+          var z = new FileReader();
+          z.addEventListener('load', function(e){ console.log(e, e.target.result);
+                                                     
+                                                   });
+          z.readAsText(aa);
+});
+    
+"<?xml version=\"1.0\" encoding=\"UTF-8\" ?>
+<ARCXML version=\"1.1\">\r\n
+<REQUEST>\r\n
+<GET_IMAGE>\r\n
+<PROPERTIES>\r\n
+<ENVELOPE minx=" + "\"" + minX + "\"" + " miny=" + "\"" + minY + "\"" + " maxx=" + "\"" + maxX + "\"" + " maxy=" + "\"" + maxY + "\"" + " \/>\r\n
+<IMAGESIZE height=\"" + height + "\" width=\"" + width + "\" \/>\r\n
+<LAYERLIST order=\"false\">\r\n
+<LAYERDEF id=\"12\" visible=\"true\" \/>\r\n
+<LAYERDEF id=\"4\" visible=\"true\">\r\n
+<GROUPRENDERER>\r\n
+<SIMPLERENDERER>
+<SIMPLEPOLYGONSYMBOL boundarytransparency=\"1\" filltransparency=\"0.2\" fillcolor=\"89,137,208\" boundarycaptype=\"round\" boundarycolor=\"89,137,208\" \/>
+<\/SIMPLERENDERER>
+<SCALEDEPENDENTRENDERER lower=\"1:1\" upper=\"1:240000000\">
+<SIMPLELABELRENDERER field=\"NAME\">
+<TEXTSYMBOL antialiasing=\"true\" font=\"Arial\" fontcolor = \"50,50,255\" fontstyle=\"italic\" fontsize=\"12\"  shadow=\"100,100,100\" transparency =\"1\" blockout=\"255,255,255\"  \/>
+<\/SIMPLELABELRENDERER>
+<\/SCALEDEPENDENTRENDERER>
+<\/GROUPRENDERER>\r\n
+<\/LAYERDEF>\r\n
+<LAYERDEF id=\"11\" visible=\"true\" type=\"polygon\">\r\n
+<GROUPRENDERER>\r\n
+<SIMPLERENDERER>
+<SIMPLEPOLYGONSYMBOL boundarytransparency=\"0.5\" filltransparency=\"0.0\" boundarycaptype=\"round\" boundarycolor=\"89,137,208\" \/>
+<\/SIMPLERENDERER>
+<SCALEDEPENDENTRENDERER lower=\"1:1\" upper=\"1:2400\">
+<SIMPLELABELRENDERER field=\"PARCEL_ID\">
+<TEXTSYMBOL antialiasing=\"false\" font=\"Arial\" fontstyle=\"\" fontsize=\"12\" fontcolor=\"0, 0, 0\" outline=\"255,255,255\" \/>
+<\/SIMPLELABELRENDERER>
+<\/SCALEDEPENDENTRENDERER>
+<\/GROUPRENDERER>\r\n
+<\/LAYERDEF>\r\n
+<LAYERDEF id=\"13\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"20\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"9\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"19\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"18\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"17\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"31\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"32\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"33\" visible=\"true\" \/>\r\n
+<LAYERDEF id=\"34\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"35\" visible=\"true\" \/>\r\n
+<LAYERDEF id=\"36\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"30\" visible=\"true\" \/>\r\n
+<LAYERDEF id=\"10\" visible=\"true\" \/>\r\n
+<LAYERDEF id=\"8\" visible=\"true\" \/>\r\n
+<LAYERDEF id=\"7\" visible=\"true\" \/>\r\n
+<LAYERDEF id=\"5\" visible=\"true\" \/>\r\n
+<LAYERDEF id=\"6\" visible=\"true\" type=\"polygon\">\r\n
+<GROUPRENDERER>\r\n
+<SIMPLERENDERER>
+<SIMPLEPOLYGONSYMBOL boundarywidth= \"1\" boundarytransparency=\"0.2\" filltransparency=\".5\" fillcolor=\"89,137,208\" boundarycaptype=\"butt\" boundarycolor=\"89,137,208\" \/>
+<\/SIMPLERENDERER>
+<SCALEDEPENDENTRENDERER lower=\"1:1\" upper=\"1:2400\">
+<SIMPLELABELRENDERER field=\"ROADS\">
+<TEXTSYMBOL antialiasing=\"true\" font=\"Arial\" fontstyle=\"italic\" fontsize=\"20\" outline=\"255,255,255\" \/>
+<\/SIMPLELABELRENDERER>
+<\/SCALEDEPENDENTRENDERER>
+<\/GROUPRENDERER>\r\n
+<\/LAYERDEF>\r\n
+<LAYERDEF id=\"38\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"37\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"3\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"1\" visible=\"true\" \/>\r\n
+<LAYERDEF id=\"2\" visible=\"false\" \/>\r\n
+<LAYERDEF id=\"0\" visible=\"true\" \/>\r\n
+<\/LAYERLIST>\r\n
+<BACKGROUND color=\"239,235,255\"\/>\r\n\r\n
+<\/PROPERTIES>\r\n
+<LAYER type=\"acetate\" name=\"theScaleBar\">\r\n
+<OBJECT units=\"pixel\">\r\n
+<SCALEBAR coords=\"1015 2\" outline=\"0,0,0\" font=\"Arial\" fontcolor=\"255,255,255\" style=\"Bold\" barcolor=\"192,192,192\" mapunits=\"feet\" scaleunits=\"feet\" antialiasing=\"True\" screenlength=\"338\" fontsize=\"14\" barwidth=\"7\" overlap=\"False\"  \/>
+<TEXT coords=\"0 0\" label=\"You are here\">\r\n
+<TEXTMARKERSYMBOL font=\"Arial\" overlap=\"true\" \/>\r\n
+<\/TEXT>\r\n
+<\/OBJECT>\r\n
+<\/LAYER>\r\n
+<\/GET_IMAGE>\r\n
+<\/REQUEST>\r\n
+<\/ARCXML>";
+
+NEW XML REQUEST:
+<LAYERDEF name="Street Names" visible="false" />
+<LAYERDEF name="Cities" visible="false" />
+<LAYERDEF name="Tax Parcels" visible="false" />
+<LAYERDEF name="Street Addresses" visible="false" />
+<LAYERDEF name="Rural Miles" visible="false" />
+<LAYERDEF name="Counties" visible="false" />
+<LAYERDEF name="Township/Range Grid" visible="false" />
+<LAYERDEF name="Township/Range Grid" visible="false" />
+<LAYERDEF name="Section Grid" visible="false" />
+<LAYERDEF name="Current Year sales price, date sold" visible="false" />
+<LAYERDEF name="  Style, Year built" visible="false" />
+<LAYERDEF name="Last Year sales price, date sold" visible="false" />
+<LAYERDEF name="  Style, Year built" visible="false" />
+<LAYERDEF name="2 Years ago sales price, date sold" visible="false" />
+<LAYERDEF name="  Style, Year built" visible="false" />
+<LAYERDEF name="  Style, Year built" visible="false" />
+<LAYERDEF name="Major Waterbodies" visible="false" />
+<LAYERDEF name="Airports" visible="false" />
+<LAYERDEF name="Railroad tracks" visible="false" />
+<LAYERDEF name="Street Centerlines" visible="false" />
+<LAYERDEF name="Arterial Circulation" visible="false" />
+<LAYERDEF name="Benchmark Names" visible="false" />
+<LAYERDEF name="Benchmark Areas" visible="false" />
+<LAYERDEF name="National Forest" visible="false" />
+<LAYERDEF name="2007 Photo Extent" visible="false" />
+<LAYERDEF name="2007 Aerial Photo" visible="false" />
+<LAYERDEF name="Topography" visible="false" />
+
+errors:
+network io error:
+  <ERROR machine="pmz-arcims" processid="5300" threadid="5984">[ERR2407] (SDE error code -10 ) SE_stream_query_with_info : Network I/O error</ERROR>
+  
+invalid pointer:
+<ERROR machine="pmz-arcims" processid="4980" threadid="2584">[ERR2407] (SDE error code -65 ) SE_stream_query_with_info : Invalid pointer argument to function</ERROR>
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+window.mapControl_module = function(){
+
+    var setImg = function(){
+        var xmlEnvelope = window.xml.getElementsByTagName( "ENVELOPE" )[0],
+            xmlOutput = window.xml.getElementsByTagName( "OUTPUT" );
+
+        try{
+            if ( this.src !== xmlOutput[0].getAttribute( 'url' ) ){
+                this.src = xmlOutput[0].getAttribute( 'url' );
+            } else {
+                window.utilities_module.addListeners();
+                this.className = '';
+                document.body.className = '';
+                return;
+            }
+            this.hiddenImage.style.cssText += 'visibility: visible; left:'+ this.style.left +'; top:'+ this.style.top +'; height:' + this.style.height +'; width:'+ this.style.width +';';
+        } catch( e ){ console.dir( e ); }
+        this.left = 0;
+        this.topp = 0;
+        this._height = this.newImgHeight;
+        this._width  = this.newImgWidth;
+        this.setAttribute( 'style', 'opacity:0; position:absolute; top:0px; left:0px; height:'+ this._height +'px; width:'+ this._width +'px;' );
+        
+        // TODO: make an on error function.
+        // this.onerror = function( e ){}
+        this.minxOld = +xmlEnvelope.getAttribute( 'minx' );
+        this.maxxOld = +xmlEnvelope.getAttribute( 'maxx' );
+        this.minyOld = +xmlEnvelope.getAttribute( 'miny' );
+        this.maxyOld = +xmlEnvelope.getAttribute( 'maxy' );  
+    }.bind( window.theMap );
+
+    var mapLoad = function(){
+        //smoothTransition.call( this, 500 );//this.className = "zooming";
+        this.className += " transitionAll2sEaseOut";
+        this.setTimeoutt( function(){ this.className = this.className.replace( / transitionAll2sEaseOut/, '' ); }.bind( this ), 500 );
+        this.calculateMarkerPosition();
+        this.style.opacity = '1';
+        setTimeout( function(){
+            this.hiddenImage.className = "";
+            this.hiddenImage.style.visibility = 'hidden';
+            this.hiddenImage.src = xml.getElementsByTagName( "OUTPUT" )[0].attributes[0].nodeValue;
+            
+            // TODO: Should fullzoom height/width be compared to viewport height/width?
+            if (  +window.$( 'zoom_slider' ).style.top.replace( /px/, '' ) == 200  && ( fullZoomUrl.height !== this.newImgHeight && fullZoomUrl.width !== this.newImgWidth )
+                || window.fullZoomUrl.satelliteView !== this.optionsReference.showSatelliteView_CheckMark ){
+                
+                window.fullZoomUrl.src = this.src;//getBase64Img(); // Used to cache a base64 of the zoomed out map so that it would load instantly, but I'm not sure if it will work in all browsers.
+                window.fullZoomUrl.height = this.newImgHeight; //TODO: This should not be newImgHeight.
+                window.fullZoomUrl.width = this.newImgWidth; //TODO: This should not be newImgWidth.
+                window.fullZoomUrl.minxOld = this.minxOld;
+                window.fullZoomUrl.maxxOld = this.maxxOld;
+                window.fullZoomUrl.minyOld = this.minyOld;
+                window.fullZoomUrl.maxyOld = this.maxyOld;
+                window.fullZoomUrl.satelliteView = this.optionsReference.showSatelliteView_CheckMark;
+            }
+            if ( !this.onPopState ){
+                window.history.pushState( {
+                
+                // getBase64Image() was hard to test on IE and firefox. In chrome you can use --disable-web-security.
+                // It works well in chrome. Basically it saves a base64 of the current map image, then when the person goes back in the history,
+                // it instantly pastes the image in without hitting the server. But need to test what happens when they resize the browser.
+                  //img: getBase64Image( this ),
+                    minxOld : this.minxOld,
+                    maxxOld : this.maxxOld,
+                    minyOld : this.minyOld,
+                    maxyOld : this.maxyOld,
+                    zoom: window.$( 'zoom_slider' ).style.top,
+                    title: "SnoCo Interactive Map "+ (++window.popStateCounter),
+                },
+                //TODO: This needs to be finished, it pasts info. to the url when the map changes.
+                "title 1", 
+                '?={"x":'+ this.minxOld +',"mx":'+ this.maxxOld +',"y":'+ this.minyOld +',"my":'+ this.maxyOld +',"z":'+ this.sliderPosition +'}' 
+                );
+                document.title = "SnoCo Interactive Map "+ window.popStateCounter;
+            } 
+            
+        }.bind( this ), 500);
+        window.utilities_module.addListeners();
+        document.body.className = '';
+        if ( this.panningAnimationTrueFalse ){
+            window.panning_module.calculatePanTime( Date.now() );
+        }
+    }
+
+    var mapLoadError = function( e ){
+        window.utilities_module.addListeners();
+        this.className = '';
+        document.body.className = '';
+        console.dir( e );
+        window.alert(' There was a problem, the map image didn\'t load properly.\n\n Please try again.\n\n');
+    }
+
+// TODO: Re-factor these 'box' functions.
+// TODO: Make the zoom slider work better with the box functions.
+    function boxdown(e){
+        var coords = utilities_module.convertMouseCoordsToStatePlane( e ),
+            zoomBox = document.createElement('div');
+
+        e.preventDefault();
+        zoomBox.id = 'boxZoom';
+        zoomBox.className = 'boxZoom';
+        window.$('theMap_container').appendChild( zoomBox );
+        zoomBox.style.top  = e.clientY - window.theMap.containerStyleTop +'px';
+        zoomBox.style.left = e.clientX - window.theMap.containerStyleLeft +'px';
+        zoomBox.start = {x: undefined, y: undefined };
+        zoomBox.statePlaneCoords = { start: { minX: coords.x, maxY: coords.y }, end: { x: undefined, y: undefined } };
+        zoomBox.start.clientX = e.clientX;
+        zoomBox.start.clientY = e.clientY;
+        zoomBox.ratioWH = window.theMap.newImgWidth/window.theMap.newImgHeight;
+        zoomBox.zoomLevel = 0;
+        window.pageHasFocus = true;
+        window.theMap.boxZoom = zoomBox;
+        window.addEventListener('mousemove', boxWH );
+        window.addEventListener('mouseup', boxup );
+    }
+
+    function boxup( e ){
+        var coords = utilities_module.convertMouseCoordsToStatePlane( e );
+        var spWidth = coords.x - window.theMap.boxZoom.statePlaneCoords.start.minX;
+        var spHeight = window.theMap.boxZoom.statePlaneCoords.start.maxY - coords.y;
+        var i = 0;
+        var widthOfBox = e.clientX - window.theMap.boxZoom.start.clientX;
+        var heightOfBox = e.clientY - window.theMap.boxZoom.start.clientY;
+        var centerPointOfBox = {x: ( widthOfBox / 2 ) + window.theMap.boxZoom.start.clientX,
+                                y: ( heightOfBox / 2) + window.theMap.boxZoom.start.clientY };
+
+
+        window.removeEventListener('mousemove', boxWH );
+        window.removeEventListener('mouseup', boxup );
+        // if( spWidth/spHeight > 1 ){ 
+        //     while( true ){ // length is greater than spWidth.
+        //         if( window.theMap.zoomPower[i] > spWidth ){
+        //             if( (spWidth > ( ( window.theMap.zoomPower[i] - window.theMap.zoomPower[i-20] ) / 2 +
+        //                 window.theMap.zoomPower[i-20] )) || i == 0 ){
+        //                 window.$('zoom_slider').style.top = i +'px';
+        //                 window.theMap.sliderPosition = i;
+        //             } else {
+        //                 window.$('zoom_slider').style.top = ( i - 20 ) +'px';
+        //                 window.theMap.sliderPosition = ( i - 20 );
+        //             }
+        //             //var spWidth = coords.x - window.theMap.boxZoom.statePlaneCoords.start.minX;
+        //             //var spHeight = window.theMap.boxZoom.statePlaneCoords.start.maxY - coords.y;
+        //             //var yRatio = window.theMap.spHewImgHeight/ window.theMap.spWewImgWidth;
+        //             //var m = (window.theMap.zoomPower[i] - spWidth) / 2;
+        //             //var z = (window.theMap.zoomPower[i] * yRatio - spHeight) / 2;
+        //             //coords.x /*maxX*/ = window.theMap.boxZoom.statePlaneCoords.start.minX + window.theMap.zoomPower[i] - m;
+        //             //window.theMap.boxZoom.statePlaneCoords.start.minX -= m;
+        //             //coords.y /*minY*/ -= z;
+        //             //window.theMap.boxZoom.statePlaneCoords.start.maxY = coords.y + ( window.theMap.zoomPower[i] * yRatio ) - z;
+        //             break;
+        //         }
+        //         i+= 20;
+        //     }
+        // } else {
+        //     // TODO: The zoom works pretty good when the spHeight is greater than the spWidth,
+        //     //       but it could be better.
+        //     while( true ){
+        //         if( window.theMap.zoomPower[i] > spHeight ){
+        //             if ( (spHeight > ((window.theMap.zoomPower[i] - window.theMap.zoomPower[i-20] )/2 +
+        //                 window.theMap.zoomPower[i-20])) || i === 0 ){
+        //                 window.$('zoom_slider').style.top = i +'px';
+        //                 window.theMap.sliderPosition = i;
+        //             } else {
+        //                 window.$('zoom_slider').style.top = ( i - 20 ) +'px';
+        //                 window.theMap.sliderPosition = ( i - 20 );
+        //             }
+        //             //var spHeight = window.theMap.boxZoom.statePlaneCoords.start.maxY - coords.y;
+        //             // var z = (window.theMap.zoomPower[i] - spHeight ) / 2;
+        //             // coords.y /*minY*/ = window.theMap.boxZoom.statePlaneCoords.start.maxY - window.theMap.zoomPower[i] + z;
+        //             // window.theMap.boxZoom.statePlaneCoords.start.maxY += z;
+        //             break;
+        //         }
+        //         i+= 20;
+        //     }
+        //}
+        var halfWidthPoint = window.innerWidth / 2;
+        var halfHeightPoint = window.innerHeith / 2;
+        window.theMap.left = (halfWidthPoint - centerPointOfBox.x);
+        window.theMap.topp = (halfHeightPoint - centerPointOfBox.y);
+        boxDoTheZoom( {width: widthOfBox, height: heightOfBox, x: centerPointOfBox.x, y: centerPointOfBox.y });
+        //utilities_module.send(  window.theMap.boxZoom.statePlaneCoords.start.minX, coords.x,
+        //                        coords.y, window.theMap.boxZoom.statePlaneCoords.start.maxY  );
+        window.$('theMap_container').removeChild( theMap.boxZoom );
+    }
+
+    var boxWH = function(e){
+        window.theMap.boxZoom.style.width = e.clientX - window.theMap.boxZoom.start.clientX +'px';
+        window.theMap.boxZoom.style.height = e.clientY - window.theMap.boxZoom.start.clientY +'px';
+    }.bind( theMap )
+
+    var boxExpand = function( e ){
+        var coords = utilities_module.convertMouseCoordsToStatePlane( e );
+
+        if( coords.x - this.boxZoom.statePlaneCoords.start.minX > this.zoomPower[ this.boxZoom.zoomLevel ]){
+            window.theMap.boxZoom.style.width = e.clientX - window.theMap.boxZoom.start.clientX +'px';
+            window.theMap.boxZoom.style.height = ( e.clientX - window.theMap.boxZoom.start.clientX ) *
+                                                    this.boxZoom.ratioWH +'px';
+            this.boxZoom.zoomLevel += 20;
+        }
+    }.bind( window.theMap )
+
+    var boxDoTheZoom = function( arg ){
+        
+            // Find where the mouse is on the map img its self, not where the mouse is in the viewport (aka screen).
+        var XcoordOnMapImg = ( arg.x - this.containerStyleLeft ) - this.left,
+            YcoordOnMapImg = ( arg.y - this.containerStyleTop ) - this.topp,
+            ratio = undefined,
+            tempHeight = arg.height,
+            tempWidth = arg.width;
+
+        
+        if(  this.sliderPosition >= 0 ){ // zoom in
+            ratio = this.zoomPower[this.sliderPosition] / this.zoomPower[( this.sliderPosition  !== 0 )? ( this.sliderPosition - 20 ): this.sliderPosition];
+            if ( this.sliderPosition  !== 0 ){
+                this.sliderPosition -= 20;
+                this.zoomSliderStyle.top = this.sliderPosition +'px';
+            } else {
+               this.sliderPosition = 0;
+            }
+        }
+        var heightRatio = arg.height / this._height;
+        var widthRatio = arg.width / this._width;
+        this.left = this.left - ( ( XcoordOnMapImg / this._width ) * ( ratio * this._width ) ) + XcoordOnMapImg ;
+            this.topp = this.topp - ( ( YcoordOnMapImg / this._height ) * ( ratio * this._height ) - YcoordOnMapImg );
+            this._height = this._height * ratio;
+            this._width  = this._width * ratio;
+            this.style.left   = this.left +'px';
+            this.style.top    = this.topp +'px';
+            this.style.height = this._height +'px';
+            this.style.width  = this._width +'px';
+        
+        var  tempWidth =  this._width * widthRatio;
+        var temHeight = this._height * heightRatio;
+        if( tempWidth > window.innerWidth ){
+           this.sliderPosition += 20;
+           this.zoomSliderStyle.top = this.sliderPosition +'px';
+            zoom_module.zoomStart( [ arg.x - this.containerStyleLeft - this.left, arg.y - this.containerStyleTop - this.topp ], arg.x, arg.y );
+        }else if( tempHeight > window.innerHeight ){
+           this.sliderPosition += 20;
+           this.zoomSliderStyle.top = this.sliderPosition +'px';
+            zoom_module.zoomStart( [ arg.x - this.containerStyleLeft - this.left, arg.y - this.containerStyleTop - this.topp ], arg.x, arg.y );
+        }else if( this.sliderPosition === 0 ){
+            zoom_module.zoomStart( [ arg.x - this.containerStyleLeft - this.left, arg.y - this.containerStyleTop - this.topp ], arg.x, arg.y );
+        } else {
+            arg.height = tempHeight;
+            arg.width = tempWidth;
+            boxDoTheZoom( arg );
+        }
+
+    }.bind( theMap )
+
+
+    var theMap_mouseDown = function ( e ){ // mouse down on theMap, either set a marker or drag the map.
+        /*test*/
+        if ( e.which !== 1 ){ return; }
+        if ( e.shiftKey ){ boxdown( e ); return false; }
+        this.clearTimeoutt( this.zoomStartTimer );
+        this.className = '';
+        this.oldMouseX = e.clientX ;
+        this.oldMouseY = e.clientY ;
+        this.oldMouseXpan = e.clientX - this.left ;
+        this.oldMouseYpan = e.clientY - this.topp ;
+        //this.xyArray = [];
+        this.panningXYOld = undefined;
+        this.panningXYNew = undefined;
+        window.utilities_module.removeTransitionFromMarkers();
+        document.addEventListener( 'mouseout', private_mapMouseUp );
+        document.addEventListener( 'mouseup', private_mapMouseUp );
+        if ( this.panningAnimationTrueFalse ){
+            document.addEventListener( 'mousemove', private_mapDragAndAnimation );
+        } else {
+            document.addEventListener( 'mousemove', private_mapDragOnly );
+        }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+    }
+
+    var private_mapMouseUp = function ( e ){// mouse up for the image
+        if ( e.relatedTarget ){ return }
+        e.preventDefault();
+        this.document.removeEventListener( 'mouseup', private_mapMouseUp );
+        this.document.removeEventListener( 'mouseout', private_mapMouseUp ); 
+        if ( this.theMap.panningAnimationTrueFalse ){
+            this.document.removeEventListener( 'mousemove', private_mapDragAndAnimation );
+        } else {
+            this.document.removeEventListener( 'mousemove', private_mapDragOnly );
+        }
+        if ( !window.pageHasFocus ){ 
+            window.pageHasFocus = true;
+            if ( e.clientY - this.theMap.oldMouseY === 0 && e.clientX - this.theMap.oldMouseX === 0 ){
+                return;
+            }
+         }
+        if ( !this.theMap.zoomStartTimer && e.clientY - this.theMap.oldMouseY === 0 && e.clientX - this.theMap.oldMouseX === 0 ){
+            window.marker_module.makeMarker( e );
+        } else {
+            if ( this.theMap.panningAnimationTrueFalse ){
+                 this.panningAnimationMouseUp( e );
+            }
+            window.zoom_module.zoomStart(
+                [( e.clientX - this.theMap.containerStyleLeft - +this.theMap.style.left.replace(/px/, '') ) , 
+                 ( e.clientY - this.theMap.containerStyleTop - +this.theMap.style.top.replace(/px/, '') )],
+                e.clientX,  e.clientY );
+        }
+    }.bind( { boxdown: boxdown, theMap: window.theMap, document: window.document, panningAnimationMouseUp: window.panning_module.panningAnimationMouseUp } );
+
+    var private_mapDragOnly = function( e ){
+        if ( e.clientY - this.oldMouseY == 0 && e.clientX - this.oldMouseX == 0 ){ return; }
+        var y = e.clientY - this.oldMouseYpan,
+            x = e.clientX - this.oldMouseXpan,
+            markers = this.markersArray,
+            len = markers.length;
+
+        this.style.top= y +'px';
+        this.style.left= x +'px';
+        while( len-- ){
+            markers[len].style.cssText += "left:"+ ( markers[len].styleLeft + x ) +"px; top:"+( markers[len].styleTop + y )+"px;";
+        }    
+    }.bind( window.theMap );
+
+    var private_mapDragAndAnimation = function( e ){
+        if ( e.clientY - this.theMap.oldMouseY == 0 && e.clientX - this.theMap.oldMouseX == 0 ){ return; }
+        var y = e.clientY - this.theMap.oldMouseYpan,
+            x = e.clientX - this.theMap.oldMouseXpan,
+            markers = this.theMap.markersArray,
+            len = markers.length;
+
+        // panningXYOld and panningXYNew are used by the panning animation
+        this.theMap.panningXYOld = this.theMap.panningXYNew || [x, y];
+        this.theMap.panningXYNew = [x, y, this.date.now()]
+        this.theMap.style.top= y +'px';
+        this.theMap.style.left= x +'px';
+        while( len-- ){
+            markers[len].style.cssText += "left:"+ ( markers[len].styleLeft + x ) +"px; top:"+( markers[len].styleTop + y )+"px;";
+        }    
+    }.bind( { theMap: window.theMap, date: window.Date } );
+
+    var overlayMap_module = function(){
+        var private_overlayXmlHttp = new XMLHttpRequest(),
+            private_xml = undefined,
+            private_overlayMapContainer = undefined,
+            private_overlayMapImg = undefined,
+            private_topDragDiv = undefined,
+            private_rightDragDiv = undefined,
+            private_bottomDragDiv = undefined,
+            private_leftDragDiv = undefined,
+            private_tabCoords = undefined;
+
+        function ajax( arg_xmlRequest ){
+            var encodedResponse = undefined,
+                url = window.parameters.urlPrefix + window.parameters.mapUrl;
+
+            private_overlayXmlHttp.abort();
+            private_overlayXmlHttp.onreadystatechange = function(){
+                if ( private_overlayXmlHttp.readyState == 4 && private_overlayXmlHttp.status == 200 ){
+                    if( /error/.test( private_overlayXmlHttp.responseText ) ){ console.log(private_overlayXmlHttp.responseText.match(/\<error.*?\<\/error/i) )}
+                    private_xml = ( new DOMParser() ).parseFromString( /<\?xml.*>/g.exec( private_overlayXmlHttp.responseText )[0], "application/xml" );
+                    private_setoverlayMap();
+                }
+            }
+            encodedResponse = window.encodeURIComponent( 'ArcXMLRequest' ) +'='+ window.encodeURIComponent( arg_xmlRequest );
+            private_overlayXmlHttp.open( 'POST', url, true );
+            private_overlayXmlHttp.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
+            private_overlayXmlHttp.send( encodedResponse );
+        }
+
+
+        function private_setoverlayMap(){
+            var xmlOutput = undefined;
+
+             if( !private_overlayMapContainer ){
+                private_makeoverlayMap();
+            }else {
+                xmlOutput = private_xml.getElementsByTagName( "OUTPUT" );
+                window.$('overlayMap').src = xmlOutput[0].getAttribute( 'url' );
+                return;
+            }
+        }
+
+        function private_makeoverlayMap(){
+            var theMap = window.$('theMap'),
+                tabwidthHeight = ( ( theMap.newImgWidth * 0.1 ) < ( theMap.newImgHeight * 0.1 ) )? ( theMap.newImgWidth * 0.1 ): ( theMap.newImgHeight * 0.1 );
+                topBottomDivParams = { "height": 20, width: tabwidthHeight }, //width = 10%;
+                leftRightDivParams = { height: tabwidthHeight, width: 20 }, //height = 10%;
+                xmlOutput = private_xml.getElementsByTagName( "OUTPUT" );
+
+            private_tabCoords = { top: 0, bottom: theMap.newImgHeight, left: 0, right: theMap.newImgWidth};
+            private_overlayMapContainer = document.createElement('div');
+                private_overlayMapContainer.id = 'overlayMapContainer';
+                private_overlayMapContainer.style.position = 'absolute'
+                private_overlayMapContainer.style.top = '0px';
+                private_overlayMapContainer.style.left= '0px';
+                private_overlayMapContainer.style.width = '100%';
+                private_overlayMapContainer.style.height = '100%';
+                //private_overlayMapContainer.style.clip ='rect( 300px, '+ (private_tabCoords.right-300) +'px, '+ (private_tabCoords.bottom-300) +'px, 300px)';// TODO: The height and width are hard coded, they need to be flexible.
+                private_overlayMapContainer.style.clip ='rect( '+ (theMap.newImgHeight /2 ) + 'px, '+ (theMap.newImgWidth /2 ) + 'px, '+ (theMap.newImgHeight /2 ) + 'px, '+ (theMap.newImgWidth /2 ) + 'px)';// TODO: The height and width are hard coded, they need to be flexible.
+                private_overlayMapContainer.style.transition = 'clip 1s ease'; 
+            if( !private_overlayMapImg ){
+                private_overlayMapImg = document.createElement('img');
+                    private_overlayMapImg.id = 'overlayMap';
+                    private_overlayMapImg.style.width = '100%';
+                    private_overlayMapImg.style.height = '100%';
+                    private_overlayMapImg.addEventListener( 'load', overLayMapImgFirstLoadAlertMessage );
+                    private_overlayMapImg.addEventListener( ( /Firefox/i.test( window.navigator.userAgent ) )? "DOMMouseScroll" : "mousewheel", shake );
+                    private_overlayMapImg.addEventListener('click', function(e){
+                        window.marker_module.makeMarker( e );
+                    } );
+            }
+            private_overlayMapImg.addEventListener( 'load', overlayMapImgInitialLoad );
+            private_overlayMapImg.src = xmlOutput[0].getAttribute( 'url' ); //window.theMap.src;
+            private_topDragDiv = document.createElement('div');
+                private_topDragDiv.id = 'topDragDiv';
+                private_topDragDiv.className = 'overlayMapTabs';
+                private_topDragDiv.style.top = private_tabCoords.top +'px';//TODO: This needs to be 1/2 the container height.
+                private_topDragDiv.style.left = ( ( private_tabCoords.right / 2 ) - ( topBottomDivParams.width / 2) ) + 'px';
+                private_topDragDiv.style.width = topBottomDivParams.width +'px';
+                private_topDragDiv.style.height = topBottomDivParams.height +'px';
+                private_topDragDiv.style.borderRadius = '0px 0px 5px 5px';
+                private_topDragDiv.container = private_overlayMapContainer;
+                private_topDragDiv.addEventListener( 'mousedown',function( e ){
+                    this.style.opacity = '0';
+                    window.addEventListener('mousemove', topDragDivMouseMove );
+                    window.addEventListener('mouseup', dragDivMouseUp);
+                    e.preventDefault();
+                } );
+                private_topDragDiv.innerHTML = '2012';
+            private_rightDragDiv = document.createElement('div');
+                private_rightDragDiv.id = 'rightDragDiv';
+                private_rightDragDiv.className = 'overlayMapTabs';
+                private_rightDragDiv.style.top = ( ( theMap.newImgHeight / 2 ) - ( leftRightDivParams.height / 2) ) + 'px';//TODO: This needs to be 1/2 the container height.private_leftDragDiv.style.top;
+                private_rightDragDiv.style.left = private_tabCoords.right - 20 +'px';
+                private_rightDragDiv.style.width = leftRightDivParams.width +'px';
+                private_rightDragDiv.style.height = leftRightDivParams.height +'px';
+                private_rightDragDiv.style.borderRadius = '5px 0px 0px 5px';
+                private_rightDragDiv.container = private_overlayMapContainer;
+                private_rightDragDiv.addEventListener( 'mousedown', function( e ){
+                    this.style.opacity = '0';
+                    window.addEventListener('mousemove', rightDragDivMouseMove );
+                    window.addEventListener('mouseup', dragDivMouseUp);
+                    e.preventDefault();
+                });
+            private_bottomDragDiv = document.createElement('div');
+                private_bottomDragDiv.id = 'bottomDragDiv';
+                private_bottomDragDiv.className = 'overlayMapTabs';
+                private_bottomDragDiv.style.top = private_tabCoords.bottom - 20 +'px';//TODO: This needs to be 1/2 the container height.
+                if ( ( ( ( theMap.newImgWidth / 2 ) - ( topBottomDivParams.width / 2) ) + 20 )> document.getElementById( 'mini_footer' ).getBoundingClientRect().left ){
+                    private_tabCoords.bottom = +document.getElementById( 'mini_footer' ).getBoundingClientRect().top - 2 /* 2 is a spacer */;
+                    private_bottomDragDiv.style.top = ( private_tabCoords.bottom - 20 ) +'px';
+                }
+                private_bottomDragDiv.style.left = private_topDragDiv.style.left;
+                private_bottomDragDiv.style.width = topBottomDivParams.width +'px';
+                private_bottomDragDiv.style.height = topBottomDivParams.height +'px';
+                private_bottomDragDiv.style.borderRadius = '5px 5px 0px 0px';
+                private_bottomDragDiv.container = private_overlayMapContainer;
+                private_bottomDragDiv.addEventListener( 'mousedown', function( e ){
+                    this.style.opacity = '0';
+                    window.addEventListener('mousemove', bottomDragDivMouseMove );
+                    window.addEventListener('mouseup', dragDivMouseUp);
+                    e.preventDefault();
+                });
+                private_bottomDragDiv.innerHTML = '2012';
+            private_leftDragDiv = document.createElement('div');
+                private_leftDragDiv.id = 'leftDragDiv';
+                private_leftDragDiv.className = 'overlayMapTabs';
+                private_leftDragDiv.style.top = private_rightDragDiv.style.top;
+                private_leftDragDiv.style.left = private_tabCoords +'px';
+                private_leftDragDiv.style.width = leftRightDivParams.width +'px';
+                private_leftDragDiv.style.height = leftRightDivParams.height +'px';
+                private_leftDragDiv.style.borderRadius = '0px 5px 5px 0px';
+                private_leftDragDiv.container = private_overlayMapContainer;
+                private_leftDragDiv.addEventListener( 'mousedown', function( e ){
+                    this.style.opacity = '0';
+                    window.addEventListener('mousemove', leftDragDivMouseMove );
+                    window.addEventListener('mouseup', dragDivMouseUp);
+                    e.preventDefault();
+                });
+            private_overlayMapContainer.appendChild( private_overlayMapImg );
+            private_overlayMapContainer.appendChild( private_leftDragDiv );
+            private_overlayMapContainer.appendChild( private_topDragDiv );
+            private_overlayMapContainer.appendChild( private_rightDragDiv );
+            private_overlayMapContainer.appendChild( private_bottomDragDiv );
+            document.getElementById('theMap_container').appendChild( private_overlayMapContainer );
+
+            var  topDragDivMouseMove = function( e ){
+                var temp = ( e.clientY - this.theMap.containerStyleTop ) - 10;
+                this.overlayMap.removeEventListener( 'mousemove', func);
+                if ( temp < 0 ){ return; }
+                if( temp > private_tabCoords.bottom - 42 ){ return; }
+                this.private_tabCoords.top = temp;
+                this.div.style.top = temp +'px';
+                this.div.container.style.clip = this.div.container.style.clip.replace(/(^rect\()-?\d+/, '$1'+ ~~temp);
+            }.bind( {theMap: theMap, div: private_topDragDiv, private_tabCoords: private_tabCoords, overlayMap: private_overlayMapImg } );
+            
+            var  rightDragDivMouseMove = function( e ){
+                 var temp = e.clientX - theMap.containerStyleLeft + 10;
+                 this.overlayMap.removeEventListener( 'mousemove', func);
+                 if( temp > theMap.newImgWidth ){ return; }
+                 if( temp < private_tabCoords.left + 42 ){ return; }
+                 this.private_tabCoords.right = temp;
+                 this.div.style.left = temp - 20 +'px';
+                 this.div.container.style.clip = this.div.container.style.clip.replace(/(^rect\(-?\d+px,?\s?)-?\d+/, '$1'+ ~~temp);
+            }.bind( { theMap: theMap, div: private_rightDragDiv, private_tabCoords: private_tabCoords, overlayMap: private_overlayMapImg } );
+            
+            var  bottomDragDivMouseMove = function( e ){
+                 var temp = e.clientY - theMap.containerStyleTop + 10;
+                 this.overlayMap.removeEventListener( 'mousemove', func);
+                 if( temp > theMap.newImgHeight ){ return; }
+                 if( temp < private_tabCoords.top + 42 ){ return; }
+                 this.private_tabCoords.bottom = temp;
+                 this.div.style.top = temp - 20 +'px';
+                 this.div.container.style.clip = this.div.container.style.clip.replace(/(^rect\(-?\d+px,?\s?-?\d+px,?\s?)-?\d+/, '$1'+ ~~temp);
+            }.bind( { theMap: theMap, div: private_bottomDragDiv, private_tabCoords: private_tabCoords, overlayMap: private_overlayMapImg } );
+            
+            var  leftDragDivMouseMove = function( e ){
+                var temp = ( e.clientX - this.theMap.containerStyleLeft )-10;
+                this.overlayMap.removeEventListener( 'mousemove', func);
+                if ( temp < 0 ){ return; }
+                if( temp > private_tabCoords.right - 42 ){ return; }
+                this.private_tabCoords.left = temp;
+                this.div.style.left = temp +'px';
+                this.div.container.style.clip = this.div.container.style.clip.replace(/-?\d+px(?:\))$/, ~~temp+'px');
+            }.bind( {theMap: theMap, div: private_leftDragDiv, private_tabCoords: private_tabCoords, overlayMap: private_overlayMapImg } );
+            
+            function dragDivMouseUp( e ){
+                if( ( e.button && e.button ===1 ) || ( e.which && e.which === 2 ) ){ return; }
+                window.removeEventListener( 'mousemove', leftDragDivMouseMove );
+                window.removeEventListener( 'mousemove', topDragDivMouseMove );
+                window.removeEventListener( 'mousemove', rightDragDivMouseMove );
+                window.removeEventListener( 'mousemove', bottomDragDivMouseMove );
+                window.$('overlayMap').addEventListener( 'mousemove', func);
+                leftDragDiv.style.opacity   = '1';
+                topDragDiv.style.opacity    = '1';
+                rightDragDiv.style.opacity  = '1';
+                bottomDragDiv.style.opacity = '1';
+            }
+
+            private_overlayMapImg.removeEventListener('mousemove', func);
+            var func = function(e){
+            this.rightDragDiv.style.top = e.clientY - 30+ 'px';
+            this.leftDragDiv.style.top = e.clientY - 30+ 'px';
+            this.topDragDiv.style.left = e.clientX - 30 + 'px';
+            this.bottomDragDiv.style.left = e.clientX - 30 + 'px';
+            }.bind( {rightDragDiv: rightDragDiv , leftDragDiv:leftDragDiv, topDragDiv:topDragDiv, bottomDragDiv:bottomDragDiv});
+            private_overlayMapImg.addEventListener( 'mousemove', func);
+        }
+
+        function overlayMapImgInitialLoad(){
+            private_overlayMapContainer.style.clip ='rect( 0px, '+ private_tabCoords.right +'px, '+ private_tabCoords.bottom +'px, 0px)';
+            window.setTimeout( function( arg_mapContainer ){ 
+                arg_mapContainer.style.transition = '';
+            }, 1700, private_overlayMapContainer );
+            this.removeEventListener( 'load', overlayMapImgInitialLoad );
+        }
+
+        function overLayMapImgFirstLoadAlertMessage(){
+            window.setTimeout( function( ){ 
+                window.alert(   '  Use the the four white tabs on the\n'+
+                                'sides to resize the overlay map.\n\n'+
+                                '  Move the overlay map out of the way\n'+
+                                'to access the bottom map so that you\n'+
+                                'can zoom and pan.');
+            }, 1100 );
+            this.removeEventListener( 'load', overLayMapImgFirstLoadAlertMessage );
+        }
+        function deleteOverlayMap(){
+            if( private_overlayMapContainer ){
+                private_overlayMapContainer.parentElement.removeChild( private_overlayMapContainer );
+                private_overlayMapContainer = false;
+            }
+        }
+
+        function resizeOverlayMapContainer(){
+            var tabwidthHeight = undefined,
+                topBottomDivParams = undefined, //width = 10%;
+                leftRightDivParams = undefined;//height = 10%;
+
+            if( private_overlayMapContainer ){
+                tabwidthHeight = ( ( theMap.newImgWidth * 0.1 ) < ( theMap.newImgHeight * 0.1 ) )? ( theMap.newImgWidth * 0.1 ): ( theMap.newImgHeight * 0.1 );
+                topBottomDivParams = { "height": 20, width: tabwidthHeight }, //width = 10%;
+                leftRightDivParams = { height: tabwidthHeight, width: 20 }, //height = 10%;
+                private_tabCoords.top = 0;
+                private_tabCoords.right = theMap.newImgWidth;
+                private_tabCoords.bottom = theMap.newImgHeight;
+                private_tabCoords.left = 0;
+                private_topDragDiv.style.cssText += 'height: '+ topBottomDivParams.height +'px; width: '+ topBottomDivParams.width +'px; top: '+ ( private_tabCoords.top )+'px; left: '+ ( ( private_tabCoords.right / 2 ) - ( topBottomDivParams.width / 2) ) +'px;';
+                private_rightDragDiv.style.cssText += 'height: '+ leftRightDivParams.height +'px; width: '+ leftRightDivParams.width +'px; top: '+ ( ( theMap.newImgHeight / 2 ) - ( leftRightDivParams.height / 2) ) +'px; left: '+ ( private_tabCoords.right - 20 ) +'px;'; 
+                private_bottomDragDiv.style.cssText += 'height: '+ topBottomDivParams.height  +'px; width: '+ topBottomDivParams.width  +'px; top: '+ ( private_tabCoords.bottom - 20 )+'px; left: '+ private_topDragDiv.style.left;
+                if ( ( ( ( theMap.newImgWidth / 2 ) - ( topBottomDivParams.width / 2) ) + 20 ) > document.getElementById( 'mini_footer' ).getBoundingClientRect().left ){
+                    private_tabCoords.bottom = +document.getElementById( 'mini_footer' ).getBoundingClientRect().top - 2 /* 2 is a spacer */;
+                    private_bottomDragDiv.style.top = ( private_tabCoords.bottom - 20 ) +'px';
+                }
+                private_leftDragDiv.style.cssText += 'height: '+ leftRightDivParams.height +'px; width: '+ leftRightDivParams.width +'px; top: '+ private_rightDragDiv.style.top +'; left: '+ private_tabCoords.left +'px;';
+                private_overlayMapContainer.style.clip ='rect( 0px, '+ private_tabCoords.right +'px, '+ private_tabCoords.bottom +'px, 0px)';
+            }
+        }
+
+        function shake(){
+            this.style.position = 'absolute';
+            this.style.left = '10px';
+            window.setTimeout(function(){
+                this.style.position = '';
+                this.style.left = '';
+            }.bind( this ), 50 );   
+        }
+        return {
+            ajax: ajax,
+            deleteOverlayMap: deleteOverlayMap,
+            resizeOverlayMapContainer: resizeOverlayMapContainer,
+        }
+    }();
+
+    return {
+        setImg: setImg,
+        mapLoad: mapLoad,
+        mapLoadError: mapLoadError,
+        theMap_mouseDown: theMap_mouseDown,
+        overlayMap_module: overlayMap_module,
+    }
+}();
