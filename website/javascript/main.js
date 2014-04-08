@@ -13,10 +13,22 @@ var main = function ( x ){
     theMap.topp    = 0; // Can't use top (with one 'p').
     theMap._width  = undefined; // This gets modified when zooming. Can't use theMap.width have to use theMap._width.
     theMap._height = undefined; // This gets modified when zooming. Can't use theMap.height have to use theMap._height.
+    theMap._left = 0;
+    theMap._top = 0;
     theMap.style.width  = theMap.width  +'px';// TODO: What is theMap.width again??
     theMap.style.height = theMap.height +'px';
     theMap.calculateMarkerPosition = window.marker_module.calculateMarkerPosition;
-    theMap.zoomPower = {"0": 900, "20": 2318, "40": 4056, "60": 7099, "80": 12423, "100": 21740, "120": 38045, "140": 66578, "160": 116512, "180": 203896, "200": 356818 };
+    theMap.zoomPower = {'0': 350,
+                        '20': 700,
+                        '40': 1400,
+                        '60': 2800,
+                        '80': 5600,
+                        '100': 11200,
+                        '120': 22400,
+                        '140': 44800,
+                        '160': 89600,
+                        '180': 179200,
+                        '200': 358400 };
     theMap.hiddenImage = $( 'theMap_secondary' );
     theMap.zoomStrartTimer = undefined;
     theMap.setTimeoutt = window.setTimeout.bind( window );
@@ -25,8 +37,10 @@ var main = function ( x ){
     theMap.presentMaxX = parameters.fullZoomMaxX;
     theMap.presentMinY = parameters.fullZoomMinY;
     theMap.presentMaxY = parameters.fullZoomMaxY;
-    theMap.panningXYOld = undefined;// Used for calculating panning animation delta.
-    theMap.panningXYNew = undefined;
+    theMap.pan = { panningXYOld: undefined, panningXYNew: undefined,
+                oldMouseY: undefined, oldMouseX: undefined,
+                oldMouseXpan: undefined, oldMouseXpan: undefined,
+                mouseMoveFunction: undefined };
     theMap.sliderPosition = 200;
     theMap.markersArray = new Array();
     theMap.zoomSliderStyle = $( 'zoom_slider' ).style;
@@ -37,6 +51,14 @@ var main = function ( x ){
     theMap.containerStyleTop = undefined;
     theMap.containerStyleRight = undefined;
     theMap.containerStyleBottom = undefined;
+    theMap.cssTransform = window.utilities_module.testProp(['transform', 'WebkitTransform', 'OTransform', 'MozTransform', 'msTransform']);
+    theMap.tempTransformText = '';
+    theMap.tempTransformString = '';
+    theMap.ratio = 1;
+    theMap.dragDiv = window.$('think_of_a_name_for_this');
+    theMap.dragDiv.left = 0;
+    theMap.dragDiv.topp = 0;
+    theMap.mousewheelevt = ( /Firefox/i.test( window.navigator.userAgent ) )? "DOMMouseScroll" : "mousewheel";
     theMap.onPopState = undefined;
     theMap.infoFromUrl = false;
     theMap.boxZoom = undefined; // TODO: This is for the box zoom test. Which works well by the way. Congrats.
@@ -44,13 +66,21 @@ var main = function ( x ){
         if ( this.sliderPosition !== 200 || arg_firstLoad ){
             this.sliderPosition = 200;
             this.zoomSliderStyle.top = this.sliderPosition +'px';
-            window.utilities_module.send( window.parameters.fullZoomMinX, window.parameters.fullZoomMaxX, window.parameters.fullZoomMinY, window.parameters.fullZoomMaxY );
+            window.utilities_module.makeArcXMLRequest( window.parameters.fullZoomMinX, window.parameters.fullZoomMaxX, window.parameters.fullZoomMinY, window.parameters.fullZoomMaxY );
         }
     };
 
+    theMap.style[theMap.cssTransform] = 'translate3d(0px,0px,0px)';
     // Calculate the initial max width and height, set the container size
     // and set _width and _height to the container size.
+    console.log( theMap.cssTransform );
+    if ( theMap.panningAnimationTrueFalse ){
+        theMap.pan.mouseMoveFunction = window.mapControl_module.mapDragAndAnimation;
+    } else {
+        theMap.pan.mouseMoveFunction = window.mapContainer_module.mapDragOnly;
+    }
     window.utilities_module.calculateMaxWidthHeight();
+    console.log( theMap.oldMouseY);
     theMap.mapContainer.style.width = theMap.resizedMapWidth +'px';
     theMap.mapContainer.style.height = theMap.resizedMapHeight +'px';
     theMap._width  = theMap.resizedMapWidth;
@@ -61,15 +91,15 @@ var main = function ( x ){
     if ( window.location.search !== '' ){
         window.utilities_module.getInfoFromUrl();
     }
-    
+    ;
     // If there was a JSON object in the url, then assume there are valid coordinates
     // to use and create the first map from those. Otherwise just zoom all the way out.
-    if ( theMap.infoFromUrl ){
-        window.utilities_module.send( theMap.presentMinX, theMap.presentMaxX, theMap.presentMinY, theMap.presentMaxY );
+    //if ( theMap.infoFromUrl ){
+        window.utilities_module.makeArcXMLRequest( theMap.presentMinX, theMap.presentMaxX, theMap.presentMinY, theMap.presentMaxY );
         $( 'zoom_slider' ).style.top = theMap.sliderPosition +'px';
-    } else {
-        theMap.zoomAllTheWayOut( true );
-    }
+    //} else {
+    //    theMap.zoomAllTheWayOut( true );
+    //}
 
     // If the panning animation is turned off, remove the slider from the options panel.
     if ( !parameters.panningAnimationTrueFalse ){
@@ -83,9 +113,10 @@ var main = function ( x ){
     //document.getElementById( 'iframe' ).addEventListener(''); // TODO: Does this still need to be here?
 
     // These load event listeners need to be below window.utilities_module.createMarkersFromInfoFromUrl listener.
-    
     theMap.addEventListener( 'load', mapControl_module.mapLoad );
     theMap.addEventListener( 'error', mapControl_module.mapLoadError );
+    window.cityCoordinates_module.cityCoordinatesInit();
+    window.smallCountySvg_module.smallCountySvgInit();
     window.onpopstate = window.utilities_module.popStateHandler;
 }
 

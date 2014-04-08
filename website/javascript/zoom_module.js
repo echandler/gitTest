@@ -49,7 +49,7 @@ window.zoom_module = function (){
         maxxOld = halfX + maxxOld - ( mouseX * xMultiplier );
         maxyOld = halfY + maxyOld - ( ( this.resizedMapHeight - mouseY ) * yMultiplier );
         minyOld = halfY + minyOld - ( ( this.resizedMapHeight - mouseY ) * yMultiplier );
-        window.utilities_module.send( minxOld , maxxOld , minyOld, maxyOld );
+        window.utilities_module.makeArcXMLRequest( minxOld , maxxOld , minyOld, maxyOld );
     }.bind( window.theMap );
 
     
@@ -119,31 +119,31 @@ window.zoom_module = function (){
         var //time = 1000,
             evt = undefined, //equalize event object
             delta = ( ( e.wheelDelta )? e.wheelDelta: ( evt = ( window.event || e ), evt.detail * - 120 ) ),
-            
+            clientX = e.clientX - this.containerStyleLeft,
+            clientY = e.clientY - this.containerStyleTop,
             // Find where the mouse is on the map img its self, not where the mouse is in the viewport (aka screen).
-            XcoordOnMapImg = ( e.clientX - this.containerStyleLeft ) - this.left,
-            YcoordOnMapImg = ( e.clientY - this.containerStyleTop ) - this.topp,
+            XcoordOnMapImg = ( clientX - this.dragDiv.left ) - this.left,
+            YcoordOnMapImg = (  clientY - this.dragDiv.topp ) - this.topp,
             markers = this.markersArray,
             i = markers.length,
             ratio = undefined,
             xMultiplier = undefined,
-            yMultiplier = undefined;
+            yMultiplier = undefined,
+            x = undefined,
+            y = undefined;
             
         this.clearTimeoutt( this.zoomStartTimer );
         if ( delta <= -120 && this.sliderPosition <= 200 ){ //zoom out
-            ratio = this.zoomPower[this.sliderPosition] / this.zoomPower[( this.sliderPosition  !== 200 )? ( this.sliderPosition + 20 ): this.sliderPosition];
+            ratio = ( this.sliderPosition  !== 200 )? 0.5: 1;
             if ( !slider && this.sliderPosition  !== 200 ){
                 this.sliderPosition += 20;
                 this.zoomSliderStyle.top = this.sliderPosition +'px';
             } else if ( !slider ){
                 this.sliderPosition = 200;
-                //fullZoomOut();
                 this.zoomSliderStyle.top = this.sliderPosition +'px';
-                //time = 1000;
-                //return;
             }
         } else if ( delta >= 120 && this.sliderPosition >= 0 ){ // zoom in
-            ratio = this.zoomPower[this.sliderPosition] / this.zoomPower[( this.sliderPosition  !== 0 )? ( this.sliderPosition - 20 ): this.sliderPosition];
+            ratio = ( this.sliderPosition  !== 0 )? 2: 1;
             if ( !slider && this.sliderPosition  !== 0 ){
                 this.sliderPosition -= 20;
                 this.zoomSliderStyle.top = this.sliderPosition +'px';
@@ -156,11 +156,20 @@ window.zoom_module = function (){
         this.topp = this.topp - ( ( YcoordOnMapImg / this._height ) * ( ratio * this._height ) - YcoordOnMapImg );
         this._height = this._height * ratio;
         this._width  = this._width * ratio;
-        this.style.left   = this.left +'px';
-        this.style.top    = this.topp +'px';
-        this.style.height = this._height +'px';
-        this.style.width  = this._width +'px';
-
+        //this.style.left   = this.left +'px';
+        //this.style.top    = this.topp +'px';
+        //this.style.height = this._height +'px';
+        //this.style.width  = this._width +'px';
+        if( ratio === 2 ){
+            x = clientX - ( this.resizedMapWidth / 2 );
+            y = clientY - ( this.resizedMapHeight / 2 );
+            this.tempTransformString = 'translate3d('+(0-x)+'px,'+(0-y) +'px, 0px) scale(2)' + this.tempTransformString;
+        } else if( ratio === 0.5 ){
+            x = ( clientX - (this.resizedMapWidth / 2 ) )/2;
+            y = ( clientY - (this.resizedMapHeight / 2 ) )/2;
+            this.tempTransformString = 'translate3d('+ x +'px,'+ y +'px, 0px) scale(0.5)' + this.tempTransformString;
+        }
+        this.style[this.cssTransform] = this.tempTransformText + this.tempTransformString;
         if ( i  !== 0 ){
             var m = undefined;
             xMultiplier = ( this.presentMaxX - this.presentMinX ) / this._width;
@@ -169,13 +178,13 @@ window.zoom_module = function (){
                 m = markers[i];
                 m.styleLeft = ( ( m.statePlaneCoordX - this.presentMinX ) / xMultiplier ) - m.offsetwidth - 3;
                 m.styleTop  = ( ( this.presentMaxY - m.statePlaneCoordY ) / yMultiplier ) - m.offsetheight;
-                m.style.cssText += 'transition: all 0.4s cubic-bezier( 0,0,0.25,1 ); left:'+ ( m.styleLeft + this.left ) +'px; top:'+ ( m.styleTop + this.topp ) +'px;';
-                //marker[i].style.cssText += 'transition: all 0.4s cubic-bezier( 0,0,0.25,1 ); -webkit-transform: translate( '+ ( markers[i].styleLeft + this.left ) +'px, '+ ( markers[i].styleTop + this.topp ) +'px);';
-           
+                //m.style.cssText += 'transition: all 0.4s cubic-bezier( 0,0,0.25,1 ); left:'+ ( m.styleLeft + this.left ) +'px; top:'+ ( m.styleTop + this.topp ) +'px;';
+                m.style.transition = 'all 0.4s cubic-bezier( 0,0,0.25,1 )';
+                m.style[this.cssTransform] = 'translate3d( '+ ~~( markers[i].styleLeft + this.left ) +'px, '+ ~~( markers[i].styleTop + this.topp ) +'px,0px)';
             }
         }
         if ( !slider ){
-            this.zoomStartTimer = this.setTimeoutt( function( newMousePosition, x, y ){ zoomStart( newMousePosition, x, y ); window.utilities_module.removeTransitionFromMarkers(); }, 1000, [ e.clientX - this.containerStyleLeft - this.left, e.clientY - this.containerStyleTop - this.topp ], e.clientX, e.clientY );
+            this.zoomStartTimer = this.setTimeoutt( function( newMousePosition, x, y ){ zoomStart( newMousePosition, x, y ); window.utilities_module.removeTransitionFromMarkers(); }, 1000, [ e.clientX - this.containerStyleLeft - this.dragDiv.left - this.left, e.clientY - this.containerStyleTop - this.dragDiv.topp - this.topp ], e.clientX, e.clientY );
         }
         //window.pageHasFocus = true;
         //console.timeEnd( 'timer' );
@@ -207,7 +216,7 @@ window.zoom_module = function (){
             // about 10 min.), if so it will pass it to the onload function which will zip it to the setImg();
             // If however the image isn't there, then load the fully zoomed out image as usual using default
             // parameters.
-            window.utilities_module.send( fullZoomUrl.minxOld, fullZoomUrl.maxxOld, fullZoomUrl.minyOld, fullZoomUrl.maxyOld );
+            window.utilities_module.makeArcXMLRequest( fullZoomUrl.minxOld, fullZoomUrl.maxxOld, fullZoomUrl.minyOld, fullZoomUrl.maxyOld );
             // var img = new Image();
             // img.onload = function(){
             //     console.log('onload');
@@ -219,13 +228,13 @@ window.zoom_module = function (){
             //     window.mapControl_module.setImg();
             // }
             // img.onerror = function(){
-            //     window.utilities_module.send( window.parameters.fullZoomMinX, window.parameters.fullZoomMaxX, window.parameters.fullZoomMinY, window.parameters.fullZoomMaxY );
+            //     window.utilities_module.makeArcXMLRequest( window.parameters.fullZoomMinX, window.parameters.fullZoomMaxX, window.parameters.fullZoomMinY, window.parameters.fullZoomMaxY );
             // }
             // img.src = fullZoomUrl.src;
             // document.body.className = 'waiting';
             // this.className = 'waiting';
         } else {
-            window.utilities_module.send( window.parameters.fullZoomMinX, window.parameters.fullZoomMaxX, window.parameters.fullZoomMinY, window.parameters.fullZoomMaxY );
+            window.utilities_module.makeArcXMLRequest( window.parameters.fullZoomMinX, window.parameters.fullZoomMaxX, window.parameters.fullZoomMinY, window.parameters.fullZoomMaxY );
         }
     }.bind( window.theMap );
 
@@ -243,8 +252,9 @@ window.zoom_module = function (){
 }()
 // failed: 3d rendering http://jsfiddle.net/94D62/6/
 // !failed: http://jsfiddle.net/Ua5LG/2/
+//http://jsbin.com/zasebewu/8/edit
 /* TODO
-    * clean up send().
+    * clean up makeArcXMLRequest().
     * make it so the pan works on full zoom out.
     * Done: rename "t".
     * delete unused properties and methods in the window.zoom_module.js return object.

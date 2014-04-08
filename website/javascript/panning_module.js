@@ -37,36 +37,26 @@ window.panning_module = function(){
 
     // Start the panning animation.
     var panningAnimationMouseUp = function( e ){
-        if ( this.theMap.panningXYNew && this.date.now() - this.theMap.panningXYNew[2] < 200 ){
-            var x = this.theMap.panningXYNew[0],
-                y = this.theMap.panningXYNew[1],
-                xAdder = ( x - this.theMap.panningXYOld[0] ) * this.panningObj.panningAnimationMultiplier,
-                yAdder = ( y - this.theMap.panningXYOld[1] ) * this.panningObj.panningAnimationMultiplier,
+        if ( this.theMap.pan.panningXYNew && this.date.now() - this.theMap.pan.panningXYNew[2] < 200 ){
+            var x = this.theMap.pan.panningXYNew[0],
+                y = this.theMap.pan.panningXYNew[1],
+                xAdder = (( x - this.theMap.pan.panningXYOld[0] ) * this.panningObj.panningAnimationMultiplier) + x,
+                yAdder = (( y - this.theMap.pan.panningXYOld[1] ) * this.panningObj.panningAnimationMultiplier) + y,
                 markers = this.theMap.markersArray,
                 len = markers.length,
                 xyAdderSum = this.abs( xAdder ) + this.abs( yAdder ),
-                //speed =  ( xyAdderSum < 300 )? 300: ( xyAdderSum > 1200 )? 1200: xyAdderSum,
                 speed = ( xyAdderSum > 1200 )? 1200: xyAdderSum,
-                transitionString = 'all '+ ( speed > this.panningObj.panningAnimationTime? this.panningObj.panningAnimationTime - 50: speed ) +'ms cubic-bezier( 0, 0, 0.25, 1 )';
+                transitionString = 'all '+ ( ( speed > this.panningObj.panningAnimationTime )? this.panningObj.panningAnimationTime - 50: speed ) +'ms cubic-bezier( 0, 0, 0.25, 1 )';
 
-            this.theMap.style.webkitTransform = 'translate3d( 0, 0px, 0px )';
-            this.theMap.style.transition = transitionString;
-            this.theMap.style.left =  ( xAdder + x ) + 'px';
-            this.theMap.style.top  =  ( yAdder + y ) + 'px';
+            if( xyAdderSum > 2000){ xyAdderSum = 2000; }
+            this.theMap.dragDiv.style.transition = transitionString;
+            this.theMap.dragDiv.style[this.theMap.cssTransform] = 'translate3d('+ xAdder +'px,'+ yAdder +'px, 0px)';
             
-            while( len-- ){
-                markers[len].style.webkitTransform = 'translate3d( 0, 0px, 0px )';
-                markers[len].style.transition = transitionString;
-
-                // TODO: Is using cssText faster?
-                markers[len].style.cssText += "left:"+ ( +markers[len].style.left.replace( /px/, '' ) + xAdder ) +"px; top:"+( +markers[len].style.top.replace( /px/, '' ) + yAdder )+"px;";
-            } 
-            
-            setTimeout( function(){ 
+            setTimeout( function(){
                 var markers = this.markersArray,
                     len = markers.length;
 
-                this.style.transition = "";
+                this.dragDiv.style.transition = "";
                 for( var i = 0; i < len; ++i ){
                     markers[i].style.transition = "";
                 } 
@@ -77,7 +67,7 @@ window.panning_module = function(){
         theMap: window.theMap, 
         abs: window.Math.abs, 
         date: window.Date,
-        panningObj: window.panningObj 
+        panningObj: window.panningObj
     } );
 
     function calculatePanTime( now ){

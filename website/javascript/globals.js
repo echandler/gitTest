@@ -14,17 +14,17 @@ var // TODO: Only parameters or default values should go in parameters.
             showSatelliteView_CheckMark : false,
             show2007YearMap_CheckMark   : false,
             show2012YearMap_CheckMark   : true,
-            showParcelNumbers_CheckMark : true, 
             showPropertyImage_CheckMark : false, 
             showParcelBoundary_CheckMark: true, 
+            showParcelNumbers_CheckMark : false, 
             showAddresses_CheckMark     : true,
         },
         showTwoMapsAtTheSameTime: true,
         homesSoldYears: { years: [ [ '2014', 'rgba(255, 0, 0, 0.5)' ], [ '2013', 'rgba(255, 255, 0, 0.5)' ], [ '2012', 'rgba(173, 216, 230, 0.5)' ] ], },
-        fullZoomMinX: 1250000,
-        fullZoomMaxX: 1622342.5,
-        fullZoomMinY: 284297.8125,
-        fullZoomMaxY: 477148,
+        fullZoomMinX: 1244781.997,
+        fullZoomMaxX: 1622342.497,
+        fullZoomMinY: 284336.973,
+        fullZoomMaxY: 477544.783,
         panningAnimationMultiplier: 20,// If this default is changed from 20, window.panning_module.panningControlsliderMove needs to be changed also with 1 added to it.
         panningAnimationTrueFalse: true, 
         panningAnimationTime: 1000,
@@ -40,7 +40,7 @@ var // TODO: Only parameters or default values should go in parameters.
     
     // TODO: ↓ this is for the address search ↓
     //MapFrame = { GCvalue : [], setupGeocode: function(){ console.log('mapframe request') } },
-    panningObj = {
+    panningObj = {//TODO: Should this be a global?
         panningAnimationMultiplier: window.parameters.panningAnimationMultiplier,
         panningAnimationTime: window.parameters.panningAnimationTime,
     },
@@ -51,3 +51,5 @@ var // TODO: Only parameters or default values should go in parameters.
     pageHasFocus = true, // TODO: this is a test.
     addRemoveEventListenersObj = undefined,
     popStateCounter = 0;
+
+    var city = false; //TODO: this is a global for testing.

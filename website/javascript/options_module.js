@@ -204,7 +204,7 @@ window.options_module = function(){
             theMap.markersArray.forEach(
                 function( marker ){
                     if ( marker.apn ){
-                        if ( !marker.querySelector('.markerImg') ){
+                        if ( !marker.querySelector( '.markerImg' ) ){
                            window.marker_module.markerAddImageAndText.call( marker.editButton, null, {"m":"", "i": window.parameters.propertyImgUrl + marker.apn.replace(/^(\d{4})\d*/, "$1") +"/"+ marker.apn +"R011.jpg" } );
                         }
                     }   
@@ -232,12 +232,12 @@ window.options_module = function(){
                     }
                 }
         } else {
-            mapControl_module.overlayMap_module.deleteOverlayMap();
+            window.overlayMap_module.deleteOverlayMap();
         }
 
         private_retrieveAndSaveOptions();
         if ( e.target.id === 'update_button' ){
-            window.utilities_module.send( theMap.presentMinX, theMap.presentMaxX, theMap.presentMinY, theMap.presentMaxY );
+            window.utilities_module.makeArcXMLRequest( theMap.presentMinX, theMap.presentMaxX, theMap.presentMinY, theMap.presentMaxY );
         }
         private_optionsPanelClose();
     }   

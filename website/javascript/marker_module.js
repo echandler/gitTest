@@ -1,9 +1,56 @@
     
 window.marker_module = function(){
+    var private_xmlQueryParams = //' #ALL#'+ 
+                                  ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.GIS_ACRES'
+                                + ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.SITUSLINE1'
+                                + ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.SITUSCITY'
+                                + ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.SITUSZIP'
+                                + ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.OWNERNAME'
+                                + ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.PARCEL_ID'
+                                + ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.MKTTL';
+    
+    var private_interStateShields = [
+        ['css/images/I_405.svg', {x: 1297219.7944701847, y: 299087.74347618467}, 20, 24, 'interStateShields' ],
+        ['css/images/I_5.svg', {x: 1310690.7391130, y: 365097.7726428}, 20, 20, 'interStateShields' ],
+        ['css/images/I_5.svg', {x: 1304692.2556091, y: 439633.3538498} , 20, 20, 'interStateShields' ],
+        ['css/images/I_5.svg', {x: 1280535.9065988, y: 299215.0671469}, 20, 20, 'interStateShields' ],
+        ['css/images/SR_9.svg', {x: 1327302.7786226, y: 326899.4225040}, 20, 20, 'interStateShields' ],
+        ['css/images/SR_9.svg', {x: 1328005.5309462373, y: 407681.92078087135}, 20, 20, 'interStateShields' ],
+        ['css/images/SR_530.svg', {x: 1401101.5901171, y: 467397.5034938}, 20, 20, 'interStateShields' ],
+        ['css/images/US_2.svg', {x: 1380120.3987939, y: 313828.3406249}, 20, 20, 'interStateShields' ],
+        ['css/images/snocoTrees.svg',{x: 1304292.2011418, y: 359470.3808035}, 13, 31, 'interStateShields']
+    ];
+
+    function makeInterStateShields(){
+        var m = 0;
+        while ( private_interStateShields[m] ){
+            makeSimpleMarker( private_interStateShields[m][0], private_interStateShields[m][1], private_interStateShields[m][2], private_interStateShields[m][3], private_interStateShields[m][4] );
+            ++m;
+        }
+    }
+
+    var makeSimpleMarker = function( arg_imgUrl, arg_spObj, arg_height, arg_width,  arg_className ){
+        var simpleMarker = document.createElement('img');
+            simpleMarker.src = arg_imgUrl;
+            simpleMarker.style.position = 'absolute';
+            simpleMarker.className = arg_className +' simpleMarker';
+            simpleMarker.width = arg_width;
+            simpleMarker.height = arg_height;
+            simpleMarker.statePlaneCoordX = arg_spObj.x;
+            simpleMarker.statePlaneCoordY = arg_spObj.y;
+            simpleMarker.styleTop  = 0;
+            simpleMarker.styleLeft = 0;
+            window.$( 'theMap_misc_container' ).appendChild( simpleMarker );
+            simpleMarker.offsetwidth = ( arg_width / 2 ) - 3;
+            simpleMarker.offsetheight = arg_height / 2;
+            window.theMap.markersArray.push( simpleMarker );
+            calculateMarkerPosition( simpleMarker );
+    } 
+
     var makeMarker = function( e, arg_infoObject ){
         // TODO: Are all these var's necessary?
         // Don't set a marker if the map is not zoomed in enough, default is 100;
-        if ( this.sliderPosition > 100 && !arg_infoObject ){ return; }
+        if ( this.sliderPosition > 120 && !arg_infoObject ){ return; }
         var infoObject = arg_infoObject || false; //{"a": "apn number goes here","x": lat,"y": lng,"m":"text message","i":"img url"}
         var statePlaneCoordsXY = !infoObject && utilities_module.convertMouseCoordsToStatePlane( e );
         var xMultiplier = ( this.presentMaxX - this.presentMinX ) / this.resizedMapWidth;
@@ -26,17 +73,17 @@ window.marker_module = function(){
             markerBody.offsetheight = undefined;
             markerBody.theMap = this;
             markerBody.setOffSetWH = function(){
-                    this.offsetwidth  = ( this.offsetWidth / 2 );
-                    this.offsetheight =  this.offsetHeight + 30;
-                }
+                this.offsetwidth  = ( this.offsetWidth / 2 );
+                this.offsetheight =  this.offsetHeight + 30;
+            }
             markerBody.apn = infoObject.a || undefined;
 
             // markerBody.message and markerBody.imgUrl are used by utilities_module.makeUrl();
             markerBody.message = infoObject.m || '';
             markerBody.imgUrl = infoObject.i || '';
-            //markerBody.addEventListener( 'click', function(){
-            //    window.pageHasFocus = true;
-            //});
+            markerBody.addEventListener( 'mousedown', function( e ){
+                e.stopPropagation();
+            });
         var deleteButton = document.createElement( 'div' );
             deleteButton.className = 'markerDeleteButton';
             deleteButton.innerHTML = '&#215;';
@@ -52,16 +99,25 @@ window.marker_module = function(){
                     } 
                 }
                 this.markerBody.parentElement.removeChild( this.markerBody );
+                window.$('smallCountyMarker'+ parentId).parentElement.removeChild( window.$('smallCountyMarker'+ parentId) );
             });
         markerBody.appendChild( deleteButton );
 
         if ( infoObject && infoObject.a !== '' ){
+            var apnContainer = document.createElement( 'div' );
+                apnContainer.style.marginTop = "-0.54em";
+                apnContainer.style.marginRight = "10px";
+            var apn = document.createElement( 'div' );
+                apn.className = ( 'markerApnText' );
+                apn.innerHTML = 'APN:'
             var anchor = document.createElement( 'a' );
-                anchor.className = 'markerApn';
+                anchor.className = 'markerApnLink';
                 anchor.href = window.parameters.apnUrl + infoObject.a;
                 anchor.target = '_blank';
-                anchor.innerHTML= infoObject.a;
-            markerBody.appendChild( anchor );
+                anchor.innerHTML= '&nbsp;'+ infoObject.a;
+            apnContainer.appendChild( apn );
+            apnContainer.appendChild( anchor );
+            markerBody.appendChild( apnContainer );
         }
 
         var editButton = document.createElement( 'a' );
@@ -84,10 +140,10 @@ window.marker_module = function(){
 
         //document.body.insertBefore( markerBody, document.body.firstChild );
         // this.parentElement should be '#theMap_container'.
-        this.parentElement.insertBefore( markerBody, this.parentElement.firstChild );
+        this.parentElement.appendChild( markerBody );
         markerBody.setOffSetWH();
         this.markersArray.push( markerBody );
-
+        window.smallCountySvg_module.smallCountySvgMakerMaker({x: markerBody.statePlaneCoordX, y: markerBody.statePlaneCoordY, id: markerBody.id });
         if ( infoObject ){
             markerAddImageAndText.call( editButton, null, infoObject );
         } else {
@@ -223,7 +279,16 @@ window.marker_module = function(){
         }.bind( this ) );
         messageContainer.appendChild( textDiv );
         textDiv.querySelector('.n') && textDiv.querySelector('.n').addEventListener( ( /Firefox/i.test( window.navigator.userAgent ) )? "DOMMouseScroll" : "mousewheel", function( e ){ e.stopPropagation(); return false; } );
-
+        
+        // The div's with class '.m' are the single homes with owner name, address, ect.
+        // don't touch the inline width style of "APN:" it is set in the css.
+        // The div's with class'.n' are for apt buildings where there is a list of apn's
+        // and the owner info is in a title attribute. Set the inline width style manually.
+        if( messageContainer.querySelector('.m') && this.markerBody.querySelector('.markerApnText') ){
+            this.markerBody.querySelector('.markerApnText').style.width = '';
+        } else if( !messageContainer.querySelector('.n') && this.markerBody.querySelector('.markerApnText') ){
+            this.markerBody.querySelector('.markerApnText').style.width = '2.5em';
+        }
         if ( imageSrc !== '' ){
             var imageAnchor = document.createElement( 'a' );
                 imageAnchor.href = imageSrc;
@@ -297,26 +362,13 @@ window.marker_module = function(){
             height = +Height || this.height,
             xMultiplier = ( this.presentMaxX - this.presentMinX ) / width,
             yMultiplier = ( this.presentMaxY - this.presentMinY ) / height,
-            //largImgOffsetX = ( left )? 0 :( ( this.viewPortWidth - this.resizedMapWidth ) / 2 ),// if zooming then largImgOffset needs to be 0;
-            //largImgOffsetY = ( topp )? 0 :( ( this.viewPortHeight - this.resizedMapHeight ) / 2 ),// if zooming then largImgOffset needs to be 0;
-            markersArray = undefined;
+            markersArray = ( singleMarker && singleMarker.id )? [singleMarker]: this.markersArray,
+            len = markersArray.length;
 
-        if ( singleMarker && singleMarker.id ){
-            singleMarker.styleLeft  = ( ( singleMarker.statePlaneCoordX - this.presentMinX ) / xMultiplier ) - singleMarker.offsetwidth - 3;
-            singleMarker.style.left = singleMarker.styleLeft  + left +'px' ;
-            singleMarker.styleTop   = ( ( this.presentMaxY - singleMarker.statePlaneCoordY ) / yMultiplier ) - singleMarker.offsetheight;
-            singleMarker.style.top  = singleMarker.styleTop + topp +'px';
-        }  else {
-            markersArray = this.markersArray;
-            for( var i = 0; i < this.markersArray.length; ++i ){
-                //smoothTransition.call( this.markersArray[i], 200 );
-                markersArray[i].className += " transitionAll2sEaseOut";
-                this.setTimeoutt( function( el ){ this.className = this.className.replace( / transitionAll2sEaseOut/, '' ); }.bind( markersArray[i] ), 500 );
-                markersArray[i].styleLeft  = ( ( markersArray[i].statePlaneCoordX - this.presentMinX ) / xMultiplier ) - markersArray[i].offsetwidth - 3 ;
-                markersArray[i].style.left = markersArray[i].styleLeft  + left +'px';
-                markersArray[i].styleTop   = ( ( this.presentMaxY - markersArray[i].statePlaneCoordY ) / yMultiplier ) - markersArray[i].offsetheight;
-                markersArray[i].style.top  = markersArray[i].styleTop + topp +'px';
-            }
+        for( var i = 0; i < len; ++i ){
+            markersArray[i].styleLeft = ( ( markersArray[i].statePlaneCoordX - this.presentMinX ) / xMultiplier ) - markersArray[i].offsetwidth - 3 ;
+            markersArray[i].styleTop  = ( ( this.presentMaxY - markersArray[i].statePlaneCoordY ) / yMultiplier ) - markersArray[i].offsetheight;
+            markersArray[i].style[this.cssTransform] = 'translate3d('+ ~~( markersArray[i].styleLeft  + left - this.dragDiv.left ) +'px, '+ ~~( markersArray[i].styleTop + topp - this.dragDiv.topp ) +'px, 0px)';
         }
     }.bind( window.theMap );
 
@@ -326,96 +378,69 @@ window.marker_module = function(){
             maxX = x+5,
             minY = y,
             maxY = y+5,
-            propXML = '<?xml version="1.0" encoding="UTF-8" ?><ARCXML version="1.1">\r\n<REQUEST>\r\n'+
-                      '<GET_FEATURES outputmode="xml" envelope="true" geometry="true" featurelimit="10000">\r\n'+
-                      '<LAYER id="11" \/><SPATIALQUERY subfields="GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.MKTTL'+
-                      ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.SITUSLINE1'+
-                      ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.SITUSCITY'+
-                      ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.SITUSZIP'+
-                      ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.OWNERNAME'+
-                      ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.PARCEL_ID"><SPATIALFILTER '+
-                      'relation="area_intersection" >'+
-                      '<ENVELOPE maxy="' + maxY + '" maxx="' + maxX + '" miny="' + minY + '" minx="' + minX + '"\/> '+
-                      "<\/SPATIALFILTER><\/SPATIALQUERY><\/GET_FEATURES><\/REQUEST><\/ARCXML>",
-            propXMLPostRequest = encodeURIComponent( "ArcXMLRequest" ) + "=" + encodeURIComponent( propXML ),
+            propXML = '<?xml version="1.0" encoding="UTF-8" ?><ARCXML version="1.1">\r\n<REQUEST>\r\n'
+                      + '<GET_FEATURES outputmode="xml" envelope="false" geometry="false" featurelimit="10000">\r\n'
+                      + '<LAYER id="11" /><SPATIALQUERY subfields="'
+                      + private_xmlQueryParams
+                      + '"><SPATIALFILTER relation="area_intersection" >'
+                      + '<ENVELOPE maxy="' + maxY + '" maxx="' + maxX + '" miny="' + minY + '" minx="' + minX + '"\/> '
+                      + '</SPATIALFILTER></SPATIALQUERY></GET_FEATURES></REQUEST></ARCXML>',
+            propXMLPostRequest = window.encodeURIComponent( "ArcXMLRequest" ) + "=" + encodeURIComponent( propXML ),
             propUrl = window.parameters.urlPrefix + window.parameters.propertyInfoUrl,
-            xmlHttp = new XMLHttpRequest(),
-            html = ownerName = addrLine1 = addrCity = addrZip = anchor = pacelArray = otherInfoArray = undefined,
-            featurCount = undefined;
+            propInfoAjax = new XMLHttpRequest();
 
-        xmlHttp.onreadystatechange = function (){
-            if ( xmlHttp.readyState === 4 && xmlHttp.status === 200 ){
-                if( /error/.test( xmlhttp.responseText ) ){ console.log(xmlhttp.responseText.match(/\<error.*?\<\/error/i) )};
-                featureCount = +xmlHttp.responseText.match(/FEATURECOUNT count="(.*?)"/)[1];
+        propInfoAjax.onreadystatechange = function (){
+            var anchor = undefined, apnContainer = undefined,
+                apn = undefined, featureCount = undefined;
+
+            if ( propInfoAjax.readyState === 4 && propInfoAjax.status === 200 ){
+                if( /error/.test( propInfoAjax.responseText ) ){ console.log(propInfoAjax.responseText.match(/<error.*<\/error/i) )};
+                featureCount = +propInfoAjax.responseText.match(/FEATURECOUNT count="(.*?)"/)[1];
                 if( featureCount=== 0 || featureCount=== 1 ){ //TODO: Is there a single way of checking for 0 or 1?
-                    this.apn = /\d{14}/g.exec( xmlHttp.responseText )[0];
-                    ownerName = private_normalize( xmlHttp.responseText.match(/OWNERNAME="(.*?)"/)[1] );
-                    addrLine1 = xmlHttp.responseText.match(/SITUSLINE1="(.*?)"/)[1];
-                    addrCity = xmlHttp.responseText.match(/SITUSCITY="(.*?)"/)[1];
-                    addrZip = xmlHttp.responseText.match(/SITUSZIP="(.*?)"/)[1];
-                    html = '<div class="m"><div>Owner:<br>Address:</div><div>'+ ownerName +'<br>'+ (( !/unknown/i.test( addrLine1 ) )?private_upperCase( addrLine1 ) +'<br>'+
-                                private_upperCase( addrCity ) +', '+ addrZip.replace( /-.*/, '' ) +'</div>': 'Unknown');
+                    this.apn = /\d{14}/g.exec( propInfoAjax.responseText )[0];
+                    apnContainer = document.createElement( 'div' );
+                    apnContainer.style.marginTop = "-0.54em";
+                    apnContainer.style.marginRight = "10px";
+                    apn = document.createElement( 'div' );
+                    apn.className = ( 'markerApnText' );
+                    apn.innerHTML = 'APN:'
                     anchor = document.createElement( 'a' );
-                    anchor.className = 'markerApn';
+                    anchor.className = 'markerApnLink';
                     anchor.href = window.parameters.apnUrl + this.apn;
                     anchor.target = '_blank';
-                    anchor.innerHTML = this.apn;
-                    this.insertBefore( anchor, this.children[1] );
-                    this.style.width = '';
-                    this.setOffSetWH();
-                    calculateMarkerPosition( this );
-                    if ( window.theMap.optionsReference.showPropertyImage_CheckMark ){
-                        markerAddImageAndText.call( this.querySelector('.markerEdit'), null, {"m":""+ html +"", "i":"http://www.snoco.org/docs/sas/photos/"+ this.apn.replace(/^(\d{4})\d*/, "$1") +"/"+ this.apn +"R011.jpg" } );
-                    }else {
-                        markerAddImageAndText.call( this.querySelector('.markerEdit'), null, {"m": html, "i":"" } );
-                    }
-                } else {
-                    parcelNumber = /PARCEL_ID="(.*?)"/g;
-                    ownerName = /OWNERNAME="(.*?)"/g;
-                    addrLine1 = /SITUSLINE1="(.*?)"/g;
-                    addrCity = /SITUSCITY="(.*?)"/g;
-                    addrZip = /SITUSZIP="(.*?)"/g;
-                    html = '<div class="n"style="'+ ( ( featureCount <= 8 )? 'text-align:center;': 'height:200px;' )+ '">';
-                    parcelArray = [];
-                    otherInfoArray = [];
-                    while( ( parcelArray = parcelNumber.exec( xmlHttp.responseText )) !== null ){
-                        html += '<a target="_blank"';
-                        html += 'title="     \n     '+ private_normalize( ownerName.exec( xmlHttp.responseText )[1] ) +'     \n    ';
-                        html += ' '+ private_upperCase( addrLine1.exec( xmlHttp.responseText )[1] ) +'     \n    ';
-                        html += ' '+ private_upperCase( addrCity.exec( xmlHttp.responseText )[1] ) +', '+ addrZip.exec( xmlHttp.responseText )[1].replace( /-.*/, '' ) +'     \n    "'+
-                        'href="'+ window.parameters.apnUrl + parcelArray[1]+'">'+ parcelArray[1] +'</a>';
-                    }
-                    html += '</div>';
-                    
-                    markerAddImageAndText.call( this.querySelector('.markerEdit'), null, {"m": html, "i":"" } )
+                    anchor.innerHTML = '&nbsp;'+ this.apn;
+                    apnContainer.appendChild( apn );
+                    apnContainer.appendChild( anchor );
+                    this.insertBefore( apnContainer, this.children[1] );
+                }
+                this.style.width = '';
+                this.setOffSetWH();
+                calculateMarkerPosition( this );
+                html = private_makeInfoHtml( propInfoAjax.responseText );
+                if ( this.apn && window.theMap.optionsReference.showPropertyImage_CheckMark ){
+                    markerAddImageAndText.call( this.querySelector('.markerEdit'), null, {"m":""+ html +"", "i":"http://www.snoco.org/docs/sas/photos/"+ this.apn.replace(/^(\d{4})\d*/, "$1") +"/"+ this.apn +"R011.jpg" } );
+                }else {
+                    markerAddImageAndText.call( this.querySelector('.markerEdit'), null, {"m": html, "i":"" } );
                 }
             }
         }.bind( this );
-        xmlHttp.open( "POST", propUrl, true );
-        xmlHttp.setRequestHeader( "Content-type", "application/x-www-form-urlencoded");
-        xmlHttp.send( propXMLPostRequest );
-    }
-
-    var deleteAllMarkers = function(){
-        var markerArray = window.theMap.markersArray,
-            len = markerArray.length,
-            container = document.getElementById( 'theMap_container' ),
-            i = 0;
-
-        for ( ; i < len; ++i ){
-
-            // Used a setTimeout for visual effect only, nothing special.
-            window.setTimeout(function( c, m ){ c.removeChild( m ) }, ( window.Math.random() * 500 ), container, markerArray[i] );
-        }
-        window.theMap.markersArray = [];
+        propInfoAjax.open( "POST", propUrl, true );
+        propInfoAjax.setRequestHeader( "Content-type", "application/x-www-form-urlencoded");
+        propInfoAjax.send( propXMLPostRequest );
     }
 
     var fromAPNtoSP = function( e ){//lat,lng
-        var apnArray = window.$('find_parcel_number_input').value.split(','),
+        var apnArray = window.$('find_parcel_number_input').value.replace(/\s/g, '').split(','),
             //url = "http://korz.tomodo.me/http://gis.snoco.org/servlet/com.esri.esrimap.Esrimap?ServiceName=Assessor&ClientVersion=9.3.0&Form=True&Encode=False&CustomService=Query",
-            url = window.parameters.urlPrefix + window.parameters.searchByApnUrl;
-            xml = undefined,
+            url = window.parameters.urlPrefix + window.parameters.searchByApnUrl,
+            xml = undefined, parcel = undefined, lat = undefined, lng = undefined,
+            xmlhttp = new XMLHttpRequest(),
+            runOnce = true,
             currentAPNs = {};
+
+            xmlRequest = 'ArcXMLRequest=' + encodeURIComponent( xml ),
+            
+            
         
         e && e.preventDefault;
         if ( apnArray[0] == '' ){ return; }
@@ -424,53 +449,125 @@ window.marker_module = function(){
         // can be compared to what the user entered in text box. If an APN is already present
         // it will be skipped...because it already exists.
         window.theMap.markersArray.forEach( 
-            function( marker ){ currentAPNs[marker.apn] = '' } 
+            function( marker ){ currentAPNs[marker.apn] = '' }
         );
         for( var i = 0; i < apnArray.length; i++ ){
-            if ( /^\d{14}$/.test( apnArray[i].trim() ) ){
-                if ( apnArray[i] in currentAPNs ){ continue; }
-
-                // A closure to get around the classic javascript loop problem.
-                ( function( parcel ){
-                    var xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><ARCXML version=\"1.1\">\r\n<REQUEST>\r\n<GET_FEATURES outputmode=\"xml\" geometry=\"false\" envelope=\"true\" featurelimit=\"14000\" beginrecord=\"1\">\r\n<LAYER id=\"11\" \/><SPATIALQUERY subfields=\"GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.X_COORD GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.Y_COORD\" where=\"PARCEL_ID = '" + parcel.trim()  + "'\" \/><\/GET_FEATURES><\/REQUEST><\/ARCXML>",
-                        xmlRequest = 'ArcXMLRequest=' + encodeURIComponent( xml ),
-                        lat = undefined, lng = undefined,
-                        xmlhttp = new XMLHttpRequest(),
-                        runOnce = true;
-
-                    xmlhttp.open( "POST", url, true );
-                    xmlhttp.onreadystatechange = function(){
-                        var lat = undefined, lng = undefined,
-                            google = undefined, state = undefined,
-                            obj = undefined;
-                      
-                        if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 && xmlhttp.responseText && runOnce ){
-                            if( /error/.test( xmlhttp.responseText ) ){ console.log(xmlhttp.responseText.match(/\<error.*?\<\/error/i) )}
-                            lat = /X_COORD="(\d+\.\d+)"/g.exec( xmlhttp.responseText )[1],
-                            lng = /Y_COORD="(\d+\.\d+)"/g.exec( xmlhttp.responseText )[1];
-                            runOnce = false;
-                            obj = { "a": parcel.trim(), "x": lat, "y": lng, "m":"", "i":"" };
-                            if (  window.theMap.optionsReference.showPropertyImage_CheckMark ){
-                                obj.i = "http://www.snoco.org/docs/sas/photos/"+ obj.a.replace(/^(\d{4})\d*/, "$1") +"/"+ obj.a +"R011.jpg"
-                            }
-                            window.marker_module.makeMarker( null, obj );
-                        }
-                    }
-                    xmlhttp.setRequestHeader( "Content-type", "application/x-www-form-urlencoded" );
-                    xmlhttp.send( xmlRequest );
-                })( apnArray[i] )
-                
+            if ( /^\d{14}$/.test( apnArray[i] ) ){
+                if ( apnArray[i] in currentAPNs ){
+                    apnArray.splice( i, 1 );
+                }
+                apnArray[i] = "'"+ apnArray[i] +"'";
             }  else {
-                alert( "There was an error parsing APN #"+ (i+1) +": "+ apnArray[i].trim() );
+                window.alert( "There was an error parsing APN #"+ (i+1) +": "+ apnArray[i].trim() );
                 console.error( 'marker_module.fromAPNtoSP - Error parsing: '+ apnArray[i].trim() );
                 if ( apnArray.length == 1){ return; }
             }
-
-          }
-          if ( !( apnArray.length === 1 && apnArray[0] === '' ) ){
-            window.theMap.zoomAllTheWayOut();
-          }
+        }
+        xml =   '<?xml version="1.0" encoding="UTF-8" ?><ARCXML version="1.1">\r\n'
+                + '<REQUEST>\r\n<GET_FEATURES outputmode="xml" geometry="false" '
+                + 'envelope="true" featurelimit="14000" beginrecord="1">\r\n'
+                + '<LAYER id="11" /><SPATIALQUERY subfields="'
+                + private_xmlQueryParams 
+                + ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.X_COORD'
+                + ' GIS_FEATURES.DBA.CADASTRAL_PARCELS_ASSESSOR.Y_COORD'
+                + "\" where=\"PARCEL_ID IN ("+ apnArray.join(',') +")\" \/>"
+                + '</GET_FEATURES></REQUEST></ARCXML>',
+        xmlRequest = 'ArcXMLRequest=' + encodeURIComponent( xml );
+        fromAPNtoSPAjax.open( "POST", url, true );
+        fromAPNtoSPAjax.onreadystatechange = function(){
+            var lat = undefined, lng = undefined, obj = undefined, html = undefined,
+                parcelNumber = undefined,
+                parcelNumberRegex = /PARCEL_ID="(.*?)"/g,
+                latRegex = /X_COORD="(\d+\.\d+)"/g,
+                lngRegex = /Y_COORD="(\d+\.\d+)"/g,
+                ownerName = /OWNERNAME=".*?" /g,
+                addrLine1 = /SITUSLINE1=".*?" /g,
+                addrCity = /SITUSCITY=".*?" /g,
+                addrZip = /SITUSZIP=".*?" /g,
+                mrkTotal = /MKTTL=".*?" /g,
+                sizeAcres = /GIS_ACRES=".*?" /g,
+                parcelArray = [],
+                theString = "";
           
+            if ( fromAPNtoSPAjax.readyState == 4 && fromAPNtoSPAjax.status == 200 && fromAPNtoSPAjax.responseText && runOnce ){
+                if( /error/.test( fromAPNtoSPAjax.responseText ) ){ console.log(fromAPNtoSPAjax.responseText.match(/\<error.*?\<\/error/i) )}
+                while( ( parcelNumber = parcelNumberRegex.exec( fromAPNtoSPAjax.responseText )[1] ) !== null ){
+                    lat = latRegex.exec( fromAPNtoSPAjax.responseText )[1];
+                    lng = lngRegex.exec( fromAPNtoSPAjax.responseText )[1];
+                    theString = ownerName.exec( fromAPNtoSPAjax.responseText )
+                                + addrLine1.exec( fromAPNtoSPAjax.responseText )
+                                + addrCity.exec( fromAPNtoSPAjax.responseText )
+                                + addrZip.exec( fromAPNtoSPAjax.responseText )
+                                + mrkTotal.exec( fromAPNtoSPAjax.responseText )
+                                + ' FEATURECOUNT count="1" '
+                                + sizeAcres.exec( fromAPNtoSPAjax.responseText );
+                    runOnce = false;
+                    html = private_makeInfoHtml( theString );
+                    obj = { "a": parcelNumber, "x": lat, "y": lng, "m": html, "i": "" };
+                    if ( window.theMap.optionsReference.showPropertyImage_CheckMark ){
+                        obj.i = "http://www.snoco.org/docs/sas/photos/"+ obj.a.replace(/^(\d{4})\d*/, "$1") +"/"+ obj.a +"R011.jpg"
+                    }
+                    window.marker_module.makeMarker( null, obj );
+                }
+            }
+        }
+        fromAPNtoSPAjax.setRequestHeader( "Content-type", "application/x-www-form-urlencoded" );
+        fromAPNtoSPAjax.send( xmlRequest );
+      if ( !( apnArray.length === 1 && apnArray[0] === '' ) ){
+        window.theMap.zoomAllTheWayOut();
+      }
+    }
+
+    function private_makeInfoHtml( arg_xml ){ 
+        var addBrIncrementor = { a: 0 },
+            ownerName = private_normalize( arg_xml.match( /OWNERNAME="(.*?)"/ )[1] ).replace( /(\s)/g, makeInfoHtml_addBr.bind( addBrIncrementor ) ),
+            addrLine1 = private_upperCase( arg_xml.match( /SITUSLINE1="(.*?)"/ )[1] ),
+            addrCity = private_upperCase( arg_xml.match( /SITUSCITY="(.*?)"/ )[1] ),
+            addrZip = arg_xml.match( /SITUSZIP="(.*?)"/ )[1].replace( /-.*/, '' ),
+            mrkTotal = ( +arg_xml.match( /MKTTL="(.*?)"/ )[1] ).toLocaleString('en');
+            parcelNumber = /PARCEL_ID="(.*?)"/g,
+            sizeAcres = arg_xml.match(/GIS_ACRES="(.*?)"/)[1], 
+            parcelArray = [],
+            otherInfoArray = [],
+            featureCount = +arg_xml.match(/FEATURECOUNT count="(.*?)"/)[1];
+            lineBreaks = (function( o ){ a = '';s = o.indexOf("<br>");while(s != -1){a += "<br>"; s = o.indexOf("<br>",s+1);}return a;})(ownerName);
+            html = undefined;
+
+        if( featureCount === 0 || featureCount === 1 ){
+            html =  '<div class="m"><div>Owner:<br>' + lineBreaks
+                    + 'Address:<br>'
+                    + ( ( !/unknown/i.test( addrLine1 ) )? '<br>':'' )
+                    + 'Value:</div><div>'+ ownerName +'<br>'                   
+                    + (( !/unknown/i.test( addrLine1 ) )? addrLine1 +'<br>'+ addrCity  +', '
+                    +   addrZip : 'Unknown') +'<br>'
+                    + '$'+ mrkTotal +' <div>('+ sizeAcres +' acres)</div></div>';
+        }else{
+            html = '<div class="n"style="'+ ( ( featureCount <= 8 )? 'text-align:center;': 'height:200px;' )+ '">';
+            ownerName = /OWNERNAME="(.*?)"/g;
+            addrLine1 = /SITUSLINE1="(.*?)"/g;
+            addrCity = /SITUSCITY="(.*?)"/g;
+            addrZip = /SITUSZIP="(.*?)"/g;
+            mrkTotal = /MKTTL="(.*?)"/g;
+            while( ( parcelArray = parcelNumber.exec( arg_xml ) ) !== null ){
+                html += '<a target="_blank"'
+                     + 'title="     \n     '+ private_normalize( ownerName.exec( arg_xml )[1] ) +'     \n    '
+                     + ' '+ private_upperCase( addrLine1.exec( arg_xml )[1] ) +'     \n    '
+                     + ' '+ private_upperCase( addrCity.exec( arg_xml )[1] ) +', '+ addrZip.exec( arg_xml )[1].replace( /-.*/, '' ) +'     \n    '
+                     + ' $'+ ( +mrkTotal.exec( arg_xml )[1] ).toLocaleString('en') +'     \n    "'
+                     + 'href="'+ window.parameters.apnUrl + parcelArray[1]+'">'+ parcelArray[1] +'</a>';
+            }
+            html += '</div>';
+        }
+
+        //TODO: This adds a <br> at every space after index 24.
+        function makeInfoHtml_addBr( match, p1, index, string ){
+            if( index >= ( this.a + 24 ) ){
+                this.a += 24;
+                return '<br>';
+            }
+            return p1;
+        }
+        return html;
     }
 
     // TODO: Simplify converSP();
@@ -501,7 +598,20 @@ window.marker_module = function(){
         Lat = lat1 / 0.01745329252;
         Lon = lon / 0.01745329252; 
         return { x: Lat.toFixed(7), y: Lon.toFixed(7) };
-}
+    }
+
+    function deleteAllMarkers(){
+        var markerArray = document.querySelectorAll('.markerParent, .smallCountyMarker'),
+            len = markerArray.length,
+            i = 0;
+
+        for ( ; i < len; ++i ){
+            // Used a setTimeout for visual effect only, nothing special.
+            window.setTimeout(function( m ){ m.parentNode.removeChild( m ) }, ( window.Math.random() * 500 ), markerArray[i] );
+        }
+        window.theMap.markersArray = [];
+    }
+
     function private_normalize( ownerName ){ // This is basically of a hack job.
         var splitIt = '',
             words = '',
@@ -544,7 +654,9 @@ window.marker_module = function(){
 
     function private_upperCase( str ){
         var pieces = str.split(" "),
-            j = i = q = undefined;
+            j = undefined,
+            i = undefined, 
+            q = undefined;
 
         for ( i = 0; q = pieces[i]; i++ ){
             j = q.charAt( 0 ).toUpperCase();
@@ -553,13 +665,33 @@ window.marker_module = function(){
         return pieces.join( " " ).replace( /llc/i, "LLC" );
     }
 
+    var isSimpleMarkerOnImage = function(){
+        var markersArray = this.markersArray,
+            len = markersArray.length;
+        for(var i = 0; i < len; ++i ){
+            if( /simpleMarker/.test( markersArray[i].className ) ){
+                if( markersArray[i].statePlaneCoordX < this.presentMaxX &&
+                    markersArray[i].statePlaneCoordY < this.presentMaxY && 
+                    markersArray[i].statePlaneCoordX > this.presentMinX &&
+                    markersArray[i].statePlaneCoordY > this.presentMinY ){
+                    markersArray[i].style.visibility = 'visible';
+                }else{
+                    markersArray[i].style.visibility = 'hidden';
+                }
+            }
+        }
+    }.bind( window.theMap );
+    
     return {
         fromAPNtoSP: fromAPNtoSP,
+        makeInterStateShields: makeInterStateShields,
+        makeSimpleMarker: makeSimpleMarker,
         makeMarker: makeMarker,
         markerMessageEditor: markerMessageEditor,
         markerAddImageAndText: markerAddImageAndText,
         calculateMarkerPosition: calculateMarkerPosition,
         deleteAllMarkers: deleteAllMarkers,
+        isSimpleMarkerOnImage: isSimpleMarkerOnImage,
     }
 }();
 

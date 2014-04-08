@@ -72,10 +72,9 @@ a {
     position: absolute;
     overflow: hidden;
 }
-#theMap, #theMap_secondary {
-    position:absolute; 
-    top:0px; 
-    left:0px;
+#theMap_primary, #theMap_secondary {
+    -webkit-transform: translate3d(0px, 0px, 0px);
+    position:absolute;
     display: block;
     margin-left: auto;
     margin-right: auto; 
@@ -86,7 +85,7 @@ a {
     box-shadow: -2px 2px 5px 0px rgb( 120, 120, 120);
 }
 
-.checkboxTd,.overlayMapHandles , .labelTd, .markerParent .markerEdit, .markerParent .markerDeleteButton, #zoom_control, #theMap_primary, #theMap_secondary {
+.checkboxTd,.overlayMapHandles , .labelTd, .markerParent .markerEdit, .markerParent .markerDeleteButton, #zoom_control, #theMap_primary, #theMap_secondary, .m :first-child, .markerApnText {
     -webkit-user-select: none; /* webkit ( safari, chrome) browsers */
     -moz-user-select: none; /* mozilla browsers */
     -khtml-user-select: none; /* webkit ( konqueror) browsers */
@@ -94,15 +93,24 @@ a {
     user-select: none;
 }
 
+.simpleMarker {
+    position: absolute;
+    top:0px;
+    left:0px;
+}
 .markerParent {
 	height : auto; /*50px*/
-	font-size : 25px;
 	background-color : rgb( 245, 245, 255);
 	position : absolute;
+    top:0px;
+    left:0px;
 	padding : 10px 25px 10px 10px;
 	border-radius : 2px;
     box-shadow: 0px 0px 0px 1px lightgrey;
-    -webkit-transform: translate3d(0px,0px,0px);
+    white-space: nowrap;      /* CSS3 */   
+    white-space: -moz-nowrap; /* Firefox */ 
+    white-space: -nowrap;     /* Opera <7 */   
+    white-space: -o-nowrap;   /* Opera 7 */    
     /*transition: z-index 0.07s ease-in;*/
 }
 
@@ -169,13 +177,18 @@ a {
     /*transition: background-color 0.05s ease-in;*/
 }
 
-.markerApn { 
-    display: block;
+.markerApnText{
+    font-size: 17px;
+    display: inline-block;
+    width: 4em;
+    text-align: right;
+    color: grey;
+}
+.markerApnLink { 
     text-decoration: none;
+    font-size: 17px;
     z-index: 200000000;
-    color: rgb( 17, 85, 204);
-    margin-top: -5px;
-    text-align: center;
+    color: rgb(17, 85, 204);
 }
 
 /*.apn:hover{
@@ -198,6 +211,7 @@ a {
 
 .messageContainer{
     width: 100%;
+    margin-top: -0.1em;
 }
 .n {
     width:10em;
@@ -230,6 +244,12 @@ a {
     cursor: default;
 }
 
+.m :nth-child(2) div {
+    color: grey;
+    font-style: italic;
+    /* float: left; */
+    display: inline-block;
+}
 .coordsDiv{
     font-size: 15px;
     font-variant: small-caps;
@@ -379,9 +399,9 @@ a {
 }
 
 .smoothTransition {
-    -webkit-backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    -webkit-transform: translate3d( 0, 0px, 0px);
+    //-webkit-backface-visibility: hidden;
+   // -webkit-perspective: 1000;
+    //-webkit-transform: translate3d( 0, 0px, 0px);
     -webkit-transition: all 0.4s cubic-bezier( 0,0,0.25,1);  /* Chrome 1-25, Safari 3.2+ */
      -moz-transition: all 0.4s cubic-bezier( 0,0,0.25,1);    /* Firefox 4-15 */
       -ms-transition: all 0.4s cubic-bezier( 0,0,0.25,1);    /* IE10 is actually unprefixed */
@@ -497,6 +517,17 @@ a {
 /*#options_svg_gear:hover {
     opacity: 1;
 }*/
+
+.svg_cities {
+    opacity: 1;
+    stroke: rgb(17, 85, 204);
+    stroke-width: 0px;
+    fill-opacity: 0.09;
+    /*fill: rgb(255, 255, 255);*/
+    transition: fill-opacity 70ms ease-in;
+    cursor: pointer;
+}
+
 .transitionAll2sEaseOut{
     transition: all 0.2s ease-out !important;
 }
@@ -738,11 +769,16 @@ a {
 }
 
 @media print{
-  #options_container, #zoom_control{
+  #options_container, #zoom_control, #small_county_svg{
     display: none;
   }
   #theMap_container{
-    /*max-height: 100%;*/
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    margin: auto;
   }
 }
 
@@ -763,6 +799,41 @@ a {
     border: 2px dotted rgb(51, 136, 255);
     cursor: default;
     background-color: rgba(255,255,255, 0.5);
+}
+
+#small_county_svg{
+    position: absolute;
+    opacity: 0;
+    z-index: 99999999;
+    fill: rgb(255, 255, 255);
+    fill-opacity: 1;
+    cusor: default;
+}
+
+#small_county_svg g{
+    fill:rgb(93, 141, 195);
+}
+
+#small_county_svg rect{
+    position: relative;
+    fill: white;
+    fill-opacity: 0.5;
+    stroke: white;
+    stroke-opacity: 0.5;
+    stroke-width: 0px;
+    cursor: pointer;
+}
+
+#scale_bar{
+    cursor: move;
+}
+
+#scale_resize_handle{
+    cursor: pointer;
+}
+
+#scale_pivot_handle{
+    cursor: pointer;
 }
 /*TODO:*
     - change options top, left, width and what ever else from % to px.
